@@ -1,0 +1,84 @@
+3 = 2 > 1 > 4 | Ascaron
+4 > 2 > 1 > 3 | Loreleil
+4 > 3 > 2 > 1 | Jejecam
+4 > 3 > 2 > 1 | Philippe Giabbanelli
+4 > 2 > 1 > 3 | tpa2067
+1 > 4 > 2 > 3 | Bapti
+3 > 4 > 1 > 2 | Cyrilb1881
+3 > 2 > 1 > 4 | Égoïté
+4 > 2 = 3 = 1 | LPLT
+3 > 4 > 2 > 1 | Arkanosis
+4 > 1 = 2 = 3 | Touriste
+4 > 2 > 3 > 1 | Mirgolth
+4 > 1 > 2 = 3 | Bloody-libu
+2 > 3 > 1 > 4 | Nemoi
+4 > 1 = 2 = 3 | Cobra Bubbles
+2 > 3 > 1 > 4 | Cédric
+4 > 1 = 2 = 3 | R
+4 > 2 > 1 = 3 | Kirtap
+4 > 1 = 2 = 3 | Wikinade
+2 > 3 > 1 > 4 | Prosopee
+4 > 1 = 2 = 3 | Ceedjee
+4 > 1 = 2 = 3 | MIRROR
+3 > 4 > 2 > 1 | Buisson38
+2 > 4 > 3 > 1 | Moipaulochon
+3 = 4 > 2 > 1 | Thémistocle
+1 > 4 > 2 > 3 | Gemini1980
+1 > 4 > 2 = 3 | sebjd
+4 > 1 = 2 = 3 | Manoillon
+4 > 2 > 1 > 3 | Nouill
+3 > 2 > 1 > 4 | Rosier
+4 > 3 > 2 > 1 | le sourcier de la Colline
+2 > 4 > 3 = 1 | Kyro
+4 > 1 = 2 = 3 | Chaoborus
+4 > 1 = 2 = 3 | Ertezoute
+4 > 1 = 2 = 3 | Guil2027
+4 > 1 = 2 = 3 | PurpleHz
+3 > 2 > 1 > 4 | JPS68
+4 > 1 = 2 = 3 | HaguardDuNord
+4 > 1 = 2 = 3 | Hamelin
+1 > 2 > 3 > 4 | Djidane39
+3 > 2 > 1 > 4 | MHM
+4 > 1 = 2 = 3 | En passant
+4 > 1 = 2 = 3 | Barraki
+4 > 1 = 2 = 3 | Hadrien
+2 > 4 > 3 > 1 | Snipre
+4 > 1 = 2 = 3 | Addacat
+4 > 3 > 2 > 1 | Gz260
+1 > 3 > 2 > 4 | Ohkami
+1 > 3 > 2 > 4 | Flying jacket
+4 > 1 = 2 = 3 | Thierry Lucas
+3 = 4 > 1 = 2 | FrançoisD
+4 > 3 = 2 = 1 | almaghi
+4 > 1 = 2 = 3 | Bibi Saint-Pol
+3 > 2 > 1 > 4 | Cantons-de-l'Est
+4 > 2 > 1 > 3 | Calimo
+2 > 1 > 3 > 4 | Totodu74
+3 > 2 > 1 > 4 | MGuf
+1 > 2 > 3 > 4 | Pablo31100
+1 > 2 > 3 > 4 | Dreoven
+4 > 3 > 2 = 1 | Xentyr
+2 > 3 > 1 > 4 | MicroCitron
+3 > 1 = 2 = 4 | Hégésippe
+3 > 2 > 1 > 4 | Riba
+2 > 1 > 4 > 3 | O. Morand
+4 > 1 = 2 = 3 | Proz
+3 > 2 > 1 > 4 | Guillaume
+4 > 1 = 2 = 3 | Priper
+3 > 4 > 2 > 1 | Mérôme Jardin
+3 > 2 > 1 > 4 | Jean Claude alias Zivax
+3 > 2 > 4 > 1 | fabriced28
+3 > 2 > 1 > 4 | Jmp48
+2 > 4 > 1 > 3 | Huesca
+1 > 3 > 2 > 4 | Chandres
+4 > 1 = 2 = 3 | Ludo
+4 > 2 > 1 > 3 | Bruno des acacias
+3 > 2 > 4 > 1 | Gukguukk28
+4 > 2 > 1 = 3 | X-Javier
+2 > 3 > 4 > 1 | Chrono1084
+2 > 3 > 1 > 4 | FrankyLeRoutier
+2 > 1 > 3 > 4 | Rosier
+2 > 1 > 3 > 4 | Xic
+4 > 1 = 2 = 3 | Udufruduhu
+2 > 4 > 3 = 1 | O2
+4 > 1 = 2 = 3 | Clem
