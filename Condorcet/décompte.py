@@ -55,7 +55,7 @@ for duel in duels:
     if score[0] == score[1]:
         print '=> match nul'
     else:
-        print '=> %s' % duel[score[0] < score[1]], '(à %d contre %d, %d indiférents' % (max(score[:-1]), min(score[:-1]), score[2])
+        print '=> %s' % duel[score[0] < score[1]], '(à %d contre %d, %d indiférents)' % (max(score[:-1]), min(score[:-1]), score[2])
     scores[duel[0]] += score[0] >= score[1]
     scores[duel[1]] += score[0] <= score[1]
 
