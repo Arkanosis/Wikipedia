@@ -44,13 +44,18 @@ duels = itertools.combinations(options, 2)
 
 for duel in duels:
     print 'Duel entre %s et %s' % duel,
-    score = [0, 0]
+    score = [0, 0, 0]
     for vote in votes:
-        score[vote[duel[0]] > vote[duel[1]]] += 1
+        if vote[duel[0]] < vote[duel[1]]:
+            score[0] += 1
+        elif vote[duel[0]] > vote[duel[1]]:
+            score[1] += 1
+        else:
+            score[2] += 1
     if score[0] == score[1]:
         print '=> match nul'
     else:
-        print '=> %s' % duel[score[0] < score[1]], '(à %d contre %d)' % (max(score), min(score))
+        print '=> %s' % duel[score[0] < score[1]], '(à %d contre %d, %d indiférents' % (max(score[:-1]), min(score[:-1]), score[2])
     scores[duel[0]] += score[0] >= score[1]
     scores[duel[1]] += score[0] <= score[1]
 
