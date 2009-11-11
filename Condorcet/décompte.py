@@ -1,4 +1,4 @@
-#! /udir/jroquet/local_Linux-x86_64/bin/python2.7
+#! /bin/env python2.7
 # -*- coding: utf-8 -*-
 
 # Décompte de Condorcet
@@ -26,7 +26,7 @@ with open(sys.argv[1]) as votes_bruts:
         votes.append({})
         rangs = vote.replace(' ', '').split('|')[0].split('>')
         for rang, valeur in itertools.izip(rangs, xrange(len(rangs))):
-            for option in rang.split('='):
+            for option in rang.replace(',', '=').split('='):
                 votes[-1][option] = valeur
 
 options = votes[0].keys()
@@ -55,7 +55,7 @@ for duel in duels:
     if score[0] == score[1]:
         print '=> match nul'
     else:
-        print '=> %s' % duel[score[0] < score[1]], '(à %d contre %d, %d indiférents)' % (max(score[:-1]), min(score[:-1]), score[2])
+        print '=> %s' % duel[score[0] < score[1]], '(à %d contre %d, %d indifférents)' % (max(score[:-1]), min(score[:-1]), score[2])
     scores[duel[0]] += score[0] >= score[1]
     scores[duel[1]] += score[0] <= score[1]
 
