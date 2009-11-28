@@ -55,3 +55,16 @@ A > C > D > E > B  | Popo le Chien
 A > C > D > E > B  | Kropotkine 113
 B > C > E > A > D  | Boréal
 B > E > A > D=C  | O. Morand
+B > C > D > E > A  | Plyd
+B > A > C > E > D  | Nakor
+B > C > A > D > E  | Thesupermat
+D > E > B > A > C  | Adrille
+A > E > B > C > D  | VonTasha
+B > C > A > E > D  | Gdgourou
+B > C > D > E > A  | Barbetorte
+B>A>C>E>D | Bonjourtheo
+C > B > A > E > D  | Zandr4
+C > A > B > D > E  | Fm790
+A >E > C > B > D  | GL
+A > E > C > D > B  | Perky
+A, E > B > C > D  | Bapti

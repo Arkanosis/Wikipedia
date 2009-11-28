@@ -58,3 +58,17 @@ B > A > C > D  | Ofol
 D > C > B > A  | Boréal
 C > B > D > A  | Sneaky 013
 C > D > B > A  | O. Morand
+C > D > B > A  | Thesupermat
+B > C > D > A | Adrille
+C > B > D > A  | VonTasha
+C > B > D > A  | Cqui
+C > B > A > D  | Barbetorte
+B>A>C>D | Thémistocle
+A > B > C > D  | Pixeltoo
+A > B > C > D | Jborme
+D>A>B>C | Bonjourtheo
+B>A>C>D  | B-noa
+B > C > A > D  | Zandr4
+B > C > A > D  | Fm790
+B > C > D > A  | Nakor
+B > A > C > D  | Bapti
