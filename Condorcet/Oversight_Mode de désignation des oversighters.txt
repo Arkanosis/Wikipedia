@@ -1,60 +1,60 @@
-A, E > B > D > C | Clem23
+A = E > B > D > C | Clem23
 B > C > D > E > A | Vyk
-A, E > B, C, D | Alphos
-A, E > D > C > B | Elfix
+A = E > B = C = D | Alphos
+A = E > D > C > B | Elfix
 B > C > D > E > A | Moipaulochon
 B > C > D > E > A | Suprememangaka
 A > B > E > D > C | Galdrad
 A > B > C > E > D | Gemini1980
 C > A > E > B > D | Loreleil
 A > E > D > B > C | Gribeco
-A > E > D,C > B | Tejgad
-A, E > D > C > B | Kyro
+A > E > D = C > B | Tejgad
+A = E > D > C > B | Kyro
 B > D > C > A > E | Tieno
 A > E > B > C > D | CheepnisAroma
 A > C > B > E > D | Riba
 B > C > A > E > D | Matrix76
 A > E > C > D > B | FrankyLeRoutier
-A,E > B,C,D | Hégésippe Cormier
+A = E > B = C = D | HégésippeCormier
 B > C > D > E > A | Égoïté
 C > B > E > A > D | Dreoven
-A, E > B, C, D | Guillom
-A, D, E > C > B | Ascaron
+A = E > B = C = D | Guillom
+A = D = E > C > B | Ascaron
 B > C > D > E > A | Ælfgar
 A > E > B > C > D | Chandres
 B > A > E > D > C | Sebjarod
-A, E > B > D > C | Stef48
+A = E > B > D > C | Stef48
 B > A > D > C > E | Pymouss
-D > C > B > E > A | David Berardan
+D > C > B > E > A | DavidBerardan
 A > B > C > D > E | FR
 B > D > C > E > A | Gz260
 A > C > B > E > D | Arkanosis
 B > D > C > A > E | Bloody-libu
 A > E > D > B > C | Moyg
-E > A > D > C > B | En passant
-A > E > B > C > D | JF Lepage
+E > A > D > C > B | Enpassant
+A > E > B > C > D | JFLepage
 A > E > C > B > D | Garfieldairlines
 B > C > D > A > E | Darkoneko
 B > C > D > A > E | Grondin
-A, E > B > C, D | Diti
+A = E > B > C = D | Diti
 C > A > B > D > E | KoS
 B > C > D > E > A | Sardur
-A, E > B, D, C | Ludo29
-A > E > C > B, D | Xfigpower
+A = E > B = D = C | Ludo29
+A > E > C > B = D | Xfigpower
 E > A > D > C > B | Litlok
 B > C > D > A > E | Grimlock
 A > E > C > B > D | Bouchecl
 A > E > B > C > D | Benjism89
-A > E > B, C, D | Iluvalar
+A > E > B = C = D | Iluvalar
 B > C > D > E > A | Padawane
 A > E > B > C > D | Hadrien
 C > D > B > A > E | Udufruduhu
 B > C > D > A = E | Hercule
 A > E > B > D > C | Zetud
-A > C > D > E > B | Popo le Chien
-A > C > D > E > B | Kropotkine 113
+A > C > D > E > B | PopoleChien
+A > C > D > E > B | Kropotkine113
 B > C > E > A > D | Boréal
-B > E > A > D=C | O. Morand
+B > E > A > D = C | O.Morand
 B > C > D > E > A | Plyd
 B > A > C > E > D | Nakor
 B > C > A > D > E | Thesupermat
@@ -62,19 +62,19 @@ D > E > B > A > C | Adrille
 A > E > B > C > D | VonTasha
 B > C > A > E > D | Gdgourou
 B > C > D > E > A | Barbetorte
-B>A>C>E>D | Bonjourtheo
+B > A > C > E > D | Bonjourtheo
 C > B > A > E > D | Zandr4
 C > A > B > D > E | Fm790
-A >E > C > B > D | GL
+A > E > C > B > D | GL
 A > E > C > D > B | Perky
-A, E > B > C > D | Bapti
-B>C>D>A>E | Thémistocle
-E > A > B> C> D | Erdrokan
+A = E > B > C > D | Bapti
+B > C > D > A > E | Thémistocle
+E > A > B > C > D | Erdrokan
 A > B > C > D > E | DocteurCosmos
-A, C > B > D > E | LPLT
-A > E | Quentinv57
+A = C > B > D > E | LPLT
+A > E > B = C = D | Quentinv57
 B > C > D > A > E | Rhadamante
 A > E > C > B > D | Fabrice75
-B > C > D > E,A | Angeldream
+B > C > D > E = A | Angeldream
 A > E > D > C > B | Mmenal
 B > E > D > A > C | Sémhur

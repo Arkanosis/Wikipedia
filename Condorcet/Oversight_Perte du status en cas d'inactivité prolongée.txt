@@ -9,38 +9,38 @@ B > C > A > D | Suprememangaka
 B > A > C > D | Gemini1980
 C > B > A > D | Loreleil
 C > D > B > A | Gribeco
-B > A,D > C | Tejgad
+B > A = D > C | Tejgad
 B > A > C > D | Kyro
 B > A > C > D | Tieno
 B > A > C > D | CheepnisAroma
 C > B > D > A | Riba
 C > B > D > A | Matrix76
 C > B > D > A | FrankyLeRoutier
-B > A > C > D | Hégésippe Cormier
+B > A > C > D | HégésippeCormier
 B > A > C > D | Jimmy
-B > C > D,A | Égoïté
+B > C > D = A | Égoïté
 B > A > C > D | Dreoven
 B > C > D > A | Ascaron
 B > C > D > A | Ælfgar
 B > C > A > D | Chandres
 B > A > C > D | Sebjarod
-C > B > D, A | Stef48
+C > B > D = A | Stef48
 B > C > A > D | Pymouss
-C > B > A > D | David Berardan
+C > B > A > D | DavidBerardan
 B > A > C > D | FR
-B, C > A, D | Edhral
+B = C > A = D | Edhral
 D > C > B > A | Gz260
 C > D > B > A | Arkanosis
 B > A > C > D | Bloody-libu
-B, C > D > A | En passant
-B > A > C > D | JF Lepage
+B = C > D > A | Enpassant
+B > A > C > D | JFLepage
 D > C > B > A | Garfieldairlines
 B > C > D > A | Darkoneko
 D > C > B > A | Grondin
 B > A > C > D | Zil
 B > C > A > D | KoS
 D > C > B > A | Sardur
-B > A > C > D | Grim Reaper
+B > A > C > D | GrimReaper
 B > A > C > D | Ludo29
 B > C > A > D | Xfigpower
 D > C > B > A | Litlok
@@ -52,22 +52,22 @@ B > C > D > A | Udufruduhu
 B > A > C > D | MHM55
 D > C > B > A | Hercule
 B > C > A > D | Zetud
-C > D > B > A | Popo le Chien
-D > C > B > A | Kropotkine 113
+C > D > B > A | PopoleChien
+D > C > B > A | Kropotkine113
 B > A > C > D | Ofol
 D > C > B > A | Boréal
-C > B > D > A | Sneaky 013
-C > D > B > A | O. Morand
+C > B > D > A | Sneaky013
+C > D > B > A | O.Morand
 C > D > B > A | Thesupermat
 B > C > D > A | Adrille
 C > B > D > A | VonTasha
 C > B > D > A | Cqui
 C > B > A > D | Barbetorte
-B>A>C>D | Thémistocle
+B > A > C > D | Thémistocle
 A > B > C > D | Pixeltoo
 A > B > C > D | Jborme
-D>A>B>C | Bonjourtheo
-B>A>C>D | B-noa
+D > A > B > C | Bonjourtheo
+B > A > C > D | B-noa
 B > C > A > D | Zandr4
 B > C > A > D | Fm790
 B > C > D > A | Nakor
@@ -75,7 +75,7 @@ B > A > C > D | Bapti
 B > C > D > A | Erdrokan
 A > B > C > D | DocteurCosmos
 C > B > D > A | LPLT
-C > B > A , D | Quentinv57
+C > B > A = D | Quentinv57
 B > C > A > D | Fabrice75
-B > C > A > D | Deep silence
+B > C > A > D | Deepsilence
 C > B > D > A | Sémhur
