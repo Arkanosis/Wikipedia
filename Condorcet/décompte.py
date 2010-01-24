@@ -10,8 +10,6 @@
 
 # Ce script est placé dans le domaine public
 
-from __future__ import with_statement
-
 import itertools
 import sys
 
@@ -22,9 +20,9 @@ if len(sys.argv) != 2:
 votes = []
 
 with open(sys.argv[1]) as votes_bruts:
-    for vote in votes_bruts:
+    for vote_brut in votes_bruts:
         votes.append({})
-        rangs = vote.replace(' ', '').split('|')[0].split('>')
+        rangs = vote_brut.replace(' ', '').split('|')[0].split('>')
         for rang, valeur in itertools.izip(rangs, xrange(len(rangs))):
             for option in rang.replace(',', '=').split('='):
                 votes[-1][option] = valeur

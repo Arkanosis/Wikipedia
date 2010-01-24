@@ -1,0 +1,62 @@
+namespace mediawiki
+{
+
+  class Portlet
+  {
+
+  }
+
+  class Tab
+  {
+
+  }
+
+  class Page
+  {
+
+  }
+
+  class Wiki
+  {
+    topBar
+    leftMenu
+    page
+    footer
+  }
+
+} // namespace mediawiki
+
+
+*UN* objet : __wiki (instance unique de mediawiki.Wiki)
+
+__wiki.topBar.append(Link())
+__wiki.topBar.insert(Link(), 2)
+
+Faire la liste de toutes les fonctionnalités existantes, garder celles qui sont utiles et les uniformiser
+Faire la liste des fonctionnalités manquantes ou en espace utilisateur
+
+Modéliser tout ça en UML (BOUML par exemple) pour la documentation (inutile si on peut générer ça à partir du code, avec NaturalDocs ou équivalent)
+
+Dans la mesure du possible, essayer de faire correspondre les noms des objets / class / prototypes javascript avec les id des éléments html
+
+Versionner le code sous Mercurial ; avec un trac pour gérer les tickets et une ML pour discuter technique (et pouvoir joindre des patches, des screenshots...)
+Coder avec Aptana et un proxy local en Python, dans la mesure du possible (Aptana étant facultatif)
+Générer une JsDoc avec tout ça (avec NaturalDocs par exemple)
+
+Batterie de tests automatiques: lancement des UTs sur tous les habillages possibles (monobook, vector...) et sur tous les navigateurs dispos, publication des résultats des tests sur un site web.
+
+
+[ Firefox ]
++---------+-----+-----+-----+-----+-----+
+| Version | 1.2 | 1.5 | 2.0 | 3.0 | 3.5 |
++---------+-----+-----+-----+-----+-----+
+| Test 1  | OK  | ...
++---------+-----+-----+-----+-----+-----+
+| Test 2 ...
++---------+-----+-----+-----+-----+-----+
+
+[ Chrome ]
+...
+
+États possibles : OK (révision) / KO (révision) ou la révision n'est pas forcément la même partout (les résultats peuvent provenir de personnes différentes)
+Clic sur le résultat donne l'historique de la case : en cas de KO, permet de retrouver la dernière révision fonctionnelle connue
