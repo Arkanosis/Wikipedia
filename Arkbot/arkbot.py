@@ -6,7 +6,7 @@
 # arkanosis@gmail.com
 
 # Ce bot est un *prototype* pour Arkbot et n'est pas destiné à un usage en production
-# http://github.com/Arkanosis/Wikipedia/arkbot (prototype)
+# http://github.com/Arkanosis/Wikipedia/Arkbot (prototype)
 # http://trac-git.assembla.com/arkbot/ (version architecturée)
 
 # Ce bot est mis à disposition sous licence MIT
@@ -47,10 +47,13 @@ import urllib
 import urllib2
 import xml.dom.minidom
 
-_userName = 'Arkbot'
+_botName = 'Arkbot'
+_trainerName = 'Arkanosis'
 
 _version = '0.1 pre-alpha'
 _userAgent = 'Arkbot/' + _version
+
+_signature = ' — [[Utilisateur:%s|%s]]&nbsp;<sup>[[Discussion utilisateur:%s|✉]]</sup>&nbsp;<small><span class="plainlinks">[http://github.com/Arkanosis/Wikipedia/tree/master/Arkbot/ <nowiki>[mes sources]</nowiki>]</span></small>' % (_botName, _botName, _trainerName) + ' %s %s %s à %s:%s (CET)'
 
 _diff = 'vimdiff'
 
@@ -271,6 +274,7 @@ class Arkbot(object):
 		if self.__shouldStop():
 			raise ApiException('The bot has been asked to stop editing the wiki, or is not logged in anymore')
 		pageInfo = self.__get(titles=page, prop='info|revisions', intoken='edit').pages.values()[0]
+
 		apiResponse = self.__post(action='edit', title=page, summary=summary, text=text, token=pageInfo.edittoken, basetimestamp=pageInfo.starttimestamp, minor=minor, bot=bot)
 		if apiResponse.edit.result != 'Success':
 			raise ApiException('Unable to edit page "%s" with summary "%s" and text "%s"' % (page, summary, text))
@@ -289,6 +293,22 @@ class Arkbot(object):
 		if not confirm:
 			oldText = None
 		self.edit(page, summary, newText, minor, bot, oldText)
+
+	def append(self, page, text, summary, bot=False, confirm=True):
+		self.__logger.info('Appending "%s" with summary "%s" on page %s"' % (text, summary, page))
+		oldText = self.read(page)
+		if oldText:
+			if oldText[-1] != '\n':
+				oldText += '\n\n'
+			elif len(oldText) > 1 and oldText[-2] != '\n':
+				oldText += '\n'
+		newText = oldText + text
+		if newText == oldText:
+			self.__logger.info('  => no change after appending')
+			return
+		if not confirm:
+			oldText = None
+		self.edit(page, summary, newText, False, bot, oldText)
 
 	def consolidate(self, page):
 		text = {
@@ -344,7 +364,7 @@ class Arkbot(object):
 		self.__logger.info('Searching for "%s" with parameters %s' % (query, kwargs))
 		return self.__search(query, *args, **kwargs)
 
-def main():
+if __name__ == '__main__':
 	print 'Arkbot %s (prototype)' % _version
 	print '(C) 2009-2010 Arkanosis'
 	print 'arkanosis@gmail.com'
@@ -379,11 +399,11 @@ def main():
 			print 'Error: unknown option "%s"' % arg
 			sys.exit(1)
 
-	bot = Arkbot(_userName, _wiki, logger)
+	bot = Arkbot(_botName, _wiki, logger)
 	logger.info('Starting')
 	try:
 		if login:
-			logger.info('Logging in with user name %s' % _userName)
+			logger.info('Logging in with user name %s' % _botName)
 			bot.login(getpass.getpass('Bot password ? '))
 
 		# TASKS
@@ -407,5 +427,3 @@ def main():
 	logger.info('Finishing')
 
 	logging.shutdown()
-
-main()
