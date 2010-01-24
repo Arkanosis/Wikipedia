@@ -9,6 +9,17 @@ if ((# < 2)); then
 fi
 
 wget "http://fr.wikipedia.org/wiki/$1" -O - 2> /dev/null |
-  sed -n 's/&gt;/>/gp' |
-  sed -n 's@<li>\(\([[:upper:]]\+[ 	]*[=,>][ 	]*\)\+[[:upper:]]\+\).*<a href="[^"]\+" title="\(Discussion \)\?[uU]tilisateur:\([^/"]\+\)".\+@\1|\4@p' |
-  sed 's/,/=/g ; s/[ 	]//g ; s/[>=|]/ & /g' >| $2
+  sed -n '
+    s/&gt;/>/gp
+    /^<h[2-6]>.\+<\/h[2-6]>$/p
+  ' | sed -n '
+    s@<li>\(\([[:upper:]0-9]\+[ 	]*[=,>][ 	]*\)\+[[:upper:]0-9]\+\).*<a href="[^"]\+" title="\(Discussion \)\?[uU]tilisateur:\([^/"]\+\)".\+@\1|\4@p  ; /^=.\+=$/p
+    /^<h[2-6]>.\+<\/h[2-6]>$/p
+  ' | sed '
+    s/modifier//
+    t tag
+    s/,/=/g ; s/[ 	]//g ; s/[>=|]/ & /g
+    :tag
+      s/<[^>]\+>//
+      t tag
+  ' >| $2
