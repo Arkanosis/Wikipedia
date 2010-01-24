@@ -15,7 +15,7 @@
 
 # [ Tâches ]
 # - Conversion des règles de Salebot vers Abusefilter
-# - Dépouillage automatique des votes de Contorcet / Schultze avec publication des résultats sur une page donnée
+# - Décompte automatique des votes de Contorcet / Schultze avec publication des résultats sur une page donnée
 # - Recherche de fautes d'orthographe / grammaire courantes, d'expressions non neutres...
 # - Génération automatique et remplissage des infoboxes / catégories à partir du texte et des interwikis
 # - Recherche des articles déblanchis et des bandeaux admissibilité / suppression retirés par IP / newbie
@@ -52,7 +52,7 @@ _userName = 'Arkbot'
 _version = '0.1 pre-alpha'
 _userAgent = 'Arkbot/' + _version
 
-_diff = 'gvimdiff'
+_diff = 'vimdiff'
 
 _lang = 'fr'
 _wiki = '%s.wikipedia.org'
@@ -129,9 +129,6 @@ class Arkbot(object):
 	def __init__(self, name, site, logger):
 		self.__logger = logger
 		self.__name = name
-		self.__userId = None
-		self.__token = None
-		self.__session = None
 		self.__connect(site)
 
 	def __connect(self, site):
@@ -397,6 +394,7 @@ def main():
 		#bot.replace('Utilisateur:Arkbot/test', r'((^|\s)[t|T]ext)(\s|$)', r'\1e\3')
 		#bot.replace('Utilisateur:Arkbot/test', r'(^|\W)[cC]harmant(\s+)village(\W|$)', r'\1village\3', reason='non neutre')
 
+		assert login, 'Login needed for replacement'
 		for result in bot.search('"charmant village"'):
 			bot.replace(result, r'(^|\W)[cC]harmant(\s+)village(\W|$)', r'\1village\3', reason='non neutre')
 		#bot.consolidate('Buddy Rogers (catcheur)')
