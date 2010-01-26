@@ -44,7 +44,7 @@ import arkbot
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
 _user = r'\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?\]\]'
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user)
-_condorcetVote = re.compile(r'^\*(?P<vote>\s*\w\s*([=,>]+\s*\w\s*)*)([^=,>].*)?%s.*$' % _user)
+_condorcetVote = re.compile(r'^\*(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)([^=,>/].*)?%s.*$' % _user)
 
 _monthName = [
 	'janvier', 'février',  'mars',  'avril',  'mai',  'juin',  'juillet',  'août',  'septembre',  'octobre',  'novembre',  'décembre',
@@ -93,7 +93,7 @@ def extractVotes(page):
 				if onACondorcetVote:
 					assert nbVotes <= 0, 'Mixed votes!'
 					nbVotes -= 1
-					vote = onACondorcetVote.group('vote').replace(',', '=').replace(' ', '').replace('\t', '').replace('>', ' > ').replace('=', ' = ')
+					vote = onACondorcetVote.group('vote').replace(',', '=').replace('/', '>').replace(' ', '').replace('\t', '').replace('>', ' > ').replace('=', ' = ').upper()
 					while vote.find('>  > ') != -1:
 						vote = vote.replace('>  >', '>')
 					user = onACondorcetVote.group('user')
@@ -206,7 +206,7 @@ if __name__ == '__main__':
 	print
 
 	if '-temp' in sys.argv:
-		temp = ' provisoire'
+		temp = ' \'\'\'provisoire\'\'\''
 		sys.argv.remove('-temp')
 	else:
 		temp = ''
