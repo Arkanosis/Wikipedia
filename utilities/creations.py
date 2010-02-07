@@ -24,7 +24,7 @@ ucstart = ''
 
 while True:
 
-    connection.request('GET', '/w/api.php?action=query&list=usercontribs&ucuser=' + username + '&uclimit=300&ucdir=older&format=json&ucnamespace=0&ucprop=title|flags|size' + ucstart)
+    connection.request('GET', '/w/api.php?action=query&list=usercontribs&ucuser=' + username + '&uclimit=500&ucdir=older&format=json&ucnamespace=0&ucprop=title|flags|size' + ucstart)
     response = connection.getresponse()
 
     if response.status != 200:
@@ -35,7 +35,7 @@ while True:
 
     for contribution in results['query']['usercontribs']:
         if 'new' in contribution:
-            if contribution['size'] > 140: # heuristic: if it's smaller than a twitt, then this must be a redirect ;-)
+            if 'size' not in contribution or contribution['size'] > 140: # heuristic: if it's smaller than a twitt, then this must be a redirect ;-)
                 creations.append(contribution['title'])
             else:
                 redirects.append(contribution['title'])

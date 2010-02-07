@@ -15,21 +15,12 @@
 #  - une personne qui vote deux fois
 #  - une personne qui vote sans satisfaire les préconditions (n contributions, inscrit depuis t, ip, bloqué...)
 # ... et proposer de les corriger automatiquement (uniquement quand lancé par Arkbot)
+# idéal : vérifier dans l'historique qui a vraiment voté
 
 # TODO envoyer un message aux gens qui n'ont pas voté pour toutes les questions (??? ; dans tous les cas, proposer au moins un opt-out à la badmood, sur la page du bot)
 
-# TODO publier automatiquement avec Arkbot
-#
-# === Titre 2 ===
-# Possibilités
-# * 1 (nom possibilité)
-# * 2 ...
-#
-# Votes extraits (menu déroulant)
-#
-#   Duel entre 1 et 2 : ...
-#
-# Vainqueurs potentiels :
+# TODO gérer quand la signature n'est pas sur la même ligne que le vote (5: pour)
+# TODO gérer les votes de Condorcet quand les puces sont des '#'
 
 import collections
 import datetime
@@ -44,11 +35,7 @@ import arkbot
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
 _user = r'\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?\]\]'
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user)
-_condorcetVote = re.compile(r'^\*(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)([^=,>/].*)?%s.*$' % _user)
-
-_monthName = [
-	'janvier', 'février',  'mars',  'avril',  'mai',  'juin',  'juillet',  'août',  'septembre',  'octobre',  'novembre',  'décembre',
-]
+_condorcetVote = re.compile(r'^\*(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
 
 def extractVotes(page):
 	line = 0
@@ -56,7 +43,17 @@ def extractVotes(page):
 	titleStack = []
 	votes = collections.OrderedDict()
 
-	def addVotes(titleStack, nbVotes, condorcetVotes):
+	def addVotes(titleStack, nbVotes, condorcetVotes, condorcetOptions):
+		normalizedVotes = []
+		condorcetOptions = sorted(condorcetOptions)
+		for vote, user in condorcetVotes:
+			separator = '>'
+			for option in condorcetOptions:
+				if vote.find(option) == -1:
+					vote += ' %s %s' % (separator, option)
+					separator = '='
+			normalizedVotes.append((vote, user))
+
 		if not nbVotes:
 			return
 		dic = votes
@@ -67,7 +64,7 @@ def extractVotes(page):
 		if nbVotes > 0:
 			dic[titleStack[-1]] = nbVotes
 		elif nbVotes < 0:
-			dic[titleStack[-1]] = condorcetVotes
+			dic[titleStack[-1]] = normalizedVotes
 
 	onATitle = None
 	while line < len(lines) and not onATitle:
@@ -103,20 +100,12 @@ def extractVotes(page):
 				else:
 					onATitle = _title.match(lines[line])
 					if onATitle:
-						normalizedVotes = []
-						condorcetOptions = sorted(condorcetOptions)
-						for vote, user in condorcetVotes:
-							separator = '>'
-							for option in condorcetOptions:
-								if vote.find(option) == -1:
-									vote += ' %s %s' % (separator, option)
-									separator = '='
-							normalizedVotes.append((vote, user))
-						addVotes(titleStack, nbVotes, normalizedVotes)
+						addVotes(titleStack, nbVotes, condorcetVotes, condorcetOptions)
 						break
 			line += 1
 
 		line += 1
+		addVotes(titleStack, nbVotes, condorcetVotes, condorcetOptions)
 	return votes
 
 def results(votes, date, temp):
@@ -197,7 +186,7 @@ def results(votes, date, temp):
 		return result
 	while len(votes.items()) == 1:
 		votes = votes.values()[0]
-	return '== Décompte%s des votes au %s %s %s à {{Heure|%s|%s}} ==\n' % (temp, date.day, _monthName[date.month - 1], date.year, date.hour, date.minute) + recResults(votes)
+	return '== Décompte%s des votes au %s %s %s à {{Heure|%s|%s}} ==\n' % (temp, date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute) + recResults(votes)
 
 if __name__ == '__main__':
 	print 'VoteScrapper 0.2'
@@ -236,7 +225,8 @@ if __name__ == '__main__':
 		res = results(votes, date, temp)
 
 		if publish:
-			bot.append('Discussion_' + sys.argv[1], res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, _monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
+			bot.append('Discussion_' + sys.argv[1], res + 'Machinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
+			#bot.append('Utilisateur:Arkbot/test', res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
 			bot.logout()
 		else:
 			print res

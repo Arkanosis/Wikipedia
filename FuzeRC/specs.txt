@@ -1,0 +1,49 @@
+FuzeRC (prototype)
+(C) 2010 Arkanosis
+arkanosis@gmail.com
+
+Cet outil est un *prototype* et n'est pas destiné à un usage en production
+  http://github.com/Arkanosis/Wikipedia/FuzeRC
+
+Ce script est mis à disposition sous licence MIT
+  http://www.opensource.org/licenses/mit-license.php
+
++=================+
+| Fonctionnalités |
++=================+
+
+- Liste des modifications récentes scrollable à l'infini (possibilité de scroll automatique en temps réel)
+- Filtrage des éléments de la liste selon divers critères
+- Traitement rapide dans une liste
+- Requêtes auto aux administrateurs (vandalisme en cours [page, coupable], blocage [coupable], protection [page], purge [page] ...)
+- Envoi de messages automatiques (remerciements, avertissements... via menu intermédiaire avec aperçus du résultat et possibilité de modifier le message avant envoi)
+- Édition "en ligne" rapide pour booster une ébauche (avec ajout de catégorie, portail, ébauche facile)
+- Diff / édition en quasi-plein écran avec boutons facilement accessibles
+- Ouverture du diff suivant une fois que l'action est validée
+- Annulation rapide (ctrl+z) avec confirmation
+- Toutes les fonctionnalités accessibles au clavier (raccourcis affichés à l'écran)
+- Communication avec un bot anti-récidive (indication de l'utilisateur et du type de modification qu'il n'a pas le droit de reproduire)
+
++======================+
+| Critères de filtrage |
++======================+
+
+- Combinaisons de filtres (et, ou, xor)
+- Filtres numériques (>, <)
+- Nombre de contribs utilisateur
+- Dernières contribs d'article uniquement
+- Tags abusefilter
+- Cacher certains status (sysop, autoconfirmed, ip...)
+- Taille de la modif (+, -...)
+- Taille de la plus grosse différence
+
++=======================+
+| Traitements possibles |
++=======================+
+
+- Marquer comme relu
+- Annuler => sous menu "raison"
+- Révoquer => sous menu "raison"
+- Blanchir => sous menu "raison"
+- Ajouter un bandeau => sous menu "bandeau"
+

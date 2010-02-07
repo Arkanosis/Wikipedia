@@ -63,6 +63,12 @@ _apiUrl = '/w/api.php?assert=user&'
 _rawUrl = '/w/index.php?'
 _searchUrl = _rawUrl + 'title=Spécial:Recherche&search='
 
+_maxApiRequest = 500
+
+_monthName = [
+	'janvier', 'février',  'mars',  'avril',  'mai',  'juin',  'juillet',  'août',  'septembre',  'octobre',  'novembre',  'décembre',
+]
+
 _getHeaders = {
 	'Accept-encoding': 'gzip',
 	'User-Agent': _userAgent,
@@ -113,13 +119,25 @@ class ApiResponse(object):
 				else:
 					entries[item] = dictionary[item]
 			except ValueError:
-				if not item.startswith('__') and isinstance(dictionary[item], dict):
-					dictionary[item] = ApiResponse(dictionary[item])
+				if not item.startswith('__'):
+					if isinstance(dictionary[item], dict):
+						dictionary[item] = ApiResponse(dictionary[item])
+					elif isinstance(dictionary[item], list):
+						items = []
+						for entry in dictionary[item]:
+							if isinstance(entry, dict):
+								items.append(ApiResponse(entry))
+							else:
+								items.append(entry)
+						dictionary[item] = items
 		self.__dict__ = dictionary
 		self.__entries = entries
 
 	def __getattr__(self, attribute):
 		return None
+
+	def __getitem__(self, key):
+		return self.__dict__[key]
 
 	def __repr__(self):
 		return repr(self.__dict__)
@@ -171,6 +189,43 @@ class Arkbot(object):
 	def __interWikis(self, links):
 		return filter(lambda link: 0 < link.find(':') < 4 or link.startswith('simple:') or link.startswith('tokipona:'), links)
 
+	def __recent(self, rclimit=10, *args, **kwargs):
+		while rclimit > 0:
+			query = 'action=query&list=recentchanges&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&rclimit=%s' % min(rclimit, _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			for change in response.query.recentchanges:
+				yield change
+			rclimit = int(rclimit) - _maxApiRequest
+			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
+
+	def __diff(self, page, oldid, newid, lang=_lang):
+		query = 'title=%s&diff=%s&oldid=%s' % (page.replace(' ', '_'), newid, oldid)
+		document = xml.dom.minidom.parse(self.__request(_rawUrl + query, lang=lang))
+		added, removed = [], []
+		for diffLine in document.getElementsByTagName('td'):
+			if diffLine.getAttribute('class').find('diff-addedline') != -1:
+				if diffLine.firstChild:
+					added.append(diffLine.firstChild.toxml().encode('utf8'))
+			elif diffLine.getAttribute('class').find('diff-deletedline') != -1:
+				if diffLine.firstChild:
+					removed.append(diffLine.firstChild.toxml().encode('utf8'))
+
+		def filterChanges(changes):
+			filtered = []
+			for change in changes:
+				diffchanges = re.findall('<span class="diffchange">(.+?)</span>', change)
+				if diffchanges:
+					filtered += diffchanges
+				else:
+					filtered.append(change[5:-6])
+			return filtered
+
+		document.unlink()
+		return filterChanges(added), filterChanges(removed)
+
 	def __search(self, query, *args, **kwargs):
 		query = query.replace(' ', '+')
 		for arg in kwargs.items():
@@ -189,12 +244,14 @@ class Arkbot(object):
 		return self.__request(_rawUrl + 'action=raw&title=' + page.replace(' ', '_'), lang=lang).read()
 
 	def __get(self, action='query', *args, **kwargs):
-		query = 'action=%s&' % action
+		query = ''
+		if action:
+			query = 'action=%s&' % action
 		for arg in kwargs.items():
 			if arg[1]:
 				query += '%s=%s&' % arg
 		query += 'format=json'
-		return self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query).query
+		return self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
 
 	def __post(self, noReturn=False, *args, **kwargs):
 		kwargs['format'] = 'json'
@@ -263,6 +320,9 @@ class Arkbot(object):
 
 	def read(self, page):
 		return self.__fetch(page)
+
+	def diff(self, page, oldid, newid):
+		return self.__diff(page, oldid, newid)
 
 	def edit(self, page, summary, text, minor=False, bot=False, oldText=None):
 		text = self.__clean(text)
@@ -364,6 +424,9 @@ class Arkbot(object):
 		self.__logger.info('Searching for "%s" with parameters %s' % (query, kwargs))
 		return self.__search(query, *args, **kwargs)
 
+	def recent(self, *args, **kwargs):
+		return self.__recent(*args, **kwargs)
+
 if __name__ == '__main__':
 	print 'Arkbot %s (prototype)' % _version
 	print '(C) 2009-2010 Arkanosis'
@@ -414,9 +477,9 @@ if __name__ == '__main__':
 		#bot.replace('Utilisateur:Arkbot/test', r'((^|\s)[t|T]ext)(\s|$)', r'\1e\3')
 		#bot.replace('Utilisateur:Arkbot/test', r'(^|\W)[cC]harmant(\s+)village(\W|$)', r'\1village\3', reason='non neutre')
 
-		assert login, 'Login needed for replacement'
-		for result in bot.search('"charmant village"'):
-			bot.replace(result, r'(^|\W)[cC]harmant(\s+)village(\W|$)', r'\1village\3', reason='non neutre')
+		#assert login, 'Login needed for replacement'
+		#for result in bot.search('"charmant village"'):
+		#	bot.replace(result, r'(^|\W)[cC]harmant(\s+)village(\W|$)', r'\1village\3', reason='non neutre')
 		#bot.consolidate('Buddy Rogers (catcheur)')
 
 		if login:
