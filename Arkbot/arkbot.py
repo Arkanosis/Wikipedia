@@ -194,7 +194,7 @@ class Arkbot(object):
 			query = 'action=query&list=recentchanges&'
 			for arg in kwargs.items():
 				query += '%s=%s&' % arg
-			query += 'format=json&rclimit=%s' % min(rclimit, _maxApiRequest)
+			query += 'format=json&rclimit=%s' % min(int(rclimit), _maxApiRequest)
 			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
 			for change in response.query.recentchanges:
 				yield change
