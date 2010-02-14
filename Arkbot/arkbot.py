@@ -354,7 +354,7 @@ class Arkbot(object):
 			oldText = None
 		self.edit(page, summary, newText, minor, bot, oldText)
 
-	def append(self, page, text, summary, bot=False, confirm=True):
+	def append(self, page, summary, text, bot=False, confirm=True):
 		self.__logger.info('Appending "%s" with summary "%s" on page %s"' % (text, summary, page))
 		oldText = self.read(page)
 		if oldText:

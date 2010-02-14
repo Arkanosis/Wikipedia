@@ -38,7 +38,7 @@ _user = r'(\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]al
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
 _condorcetOption = re.compile(r'^\*\s*(?P<option>\w)[-–—]\s*(?P<description>.+)')
 _condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
-_deletedText = re.compile(r'<(?P<tag>del|s)>.*</(?P=tag)>', re.UNICODE)
+_deletedText = re.compile(r'<(?P<tag>del|s|ref)>.*</(?P=tag)>', re.UNICODE)
 
 def translate(string, translations):
 	for term in translations:
@@ -168,18 +168,20 @@ def results(votes, date, temp):
 |- {{ligne grise}}
 |colspan="2"| \'\'\'%s\'\'\' ([[%s#%s|\'\'%s votes\'\']])
 """ % (title, sys.argv[1], title, totalVotes)
-				votes = sorted(content.items(), lambda x, y: cmp(y[1], x[1]))
-				result += '|-\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (votes[0][0], votes[0][1], float(votes[0][1]) / totalVotes * 100)
-				for option, nbVotes in votes[1:]:
-					result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+				votes = content.items()
+				winner = max(votes, key=lambda x: x[1])[1]
+				for option, nbVotes in votes:
+					if nbVotes == winner:
+						result += '|-{{ligne verte}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+					else:
+						result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 				result += '|}\n'
 			else:
 				# TODO contrôler que personne n'a voté deux fois, si c'est le cas, ne pas prendre le vote en compte, et le marquer à côté
 				# TODO déposer un message sur la PDD de ceux qui auraient voté plusieurs fois
-				condorcetVotes = []
-				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title, len(content.values()[0]))
 				votes = content.values()[0]
-
+				condorcetVotes = []
+				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title, len(votes[1]))
 				for vote, user in votes[1]:
 					result += '* %s | %s\n' % (vote, user)
 					condorcetVotes.append({})
@@ -276,8 +278,8 @@ if __name__ == '__main__':
 		res = results(votes, date, temp)
 
 		if publish:
-			#bot.append('Discussion_' + sys.argv[1], res + 'Machinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
-			bot.append('Utilisateur:Arkbot/test', res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
+			bot.append('Discussion_' + sys.argv[1], 'Décompte provisoire des votes', res + 'Machinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute))
+			#bot.edit('Utilisateur:Arkbot/test', 'Décompte provisoire des votes (test)', res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute))
 			bot.logout()
 		else:
 			print res
