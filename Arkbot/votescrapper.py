@@ -33,13 +33,25 @@ import sys
 import arkbot
 
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
-_user = r'\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?\]\]'
-_countVote = re.compile(r'^#[^:].*%s.*$' % _user)
-_condorcetVote = re.compile(r'^\*(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
+_user = r'(\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?\]\]|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
+_countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
+_condorcetOption = re.compile(r'') # TODO extraire les options
+_condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
+_deletedText = re.compile(r'<(?P<tag>del|s)>.*</(?P=tag)>', re.UNICODE)
+
+def translate(string, translations):
+	for term in translations:
+		string = string.replace(term, translations[term])
+	return string
 
 def extractVotes(page):
-	line = 0
 	lines = page.split('\n')
+
+	for line in xrange(len(lines)):
+		lines[line] = re.sub(_deletedText, '', lines[line])
+
+	line = 0
+
 	titleStack = []
 	votes = collections.OrderedDict()
 
@@ -90,10 +102,19 @@ def extractVotes(page):
 				if onACondorcetVote:
 					assert nbVotes <= 0, 'Mixed votes!'
 					nbVotes -= 1
-					vote = onACondorcetVote.group('vote').replace(',', '=').replace('/', '>').replace(' ', '').replace('\t', '').replace('>', ' > ').replace('=', ' = ').upper()
+					vote = translate(onACondorcetVote.group('vote'), {
+						',': '=',
+						'/': '>',
+						' ': '',
+						'\t': '',
+						'>': ' > ',
+						'=': ' = ',
+					}).upper()
 					while vote.find('>  > ') != -1:
 						vote = vote.replace('>  >', '>')
 					user = onACondorcetVote.group('user')
+					if not user:
+						user = onACondorcetVote.group('user2')
 					for option in vote.replace(' ', '').replace('>', '').replace('=', ''):
 						condorcetOptions.add(option)
 					condorcetVotes.append((vote, user))
@@ -127,6 +148,8 @@ def results(votes, date, temp):
 					result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 				result += '|}\n'
 			else:
+				# TODO contrôler que personne n'a voté deux fois, si c'est le cas, ne pas prendre le vote en compte, et le marquer à côté
+				# TODO déposer un message sur la PDD de ceux qui auraient voté plusieurs fois
 				condorcetVotes = []
 				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title, len(content.values()[0]))
 				for vote, user in content.values()[0]:
@@ -225,8 +248,8 @@ if __name__ == '__main__':
 		res = results(votes, date, temp)
 
 		if publish:
-			bot.append('Discussion_' + sys.argv[1], res + 'Machinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
-			#bot.append('Utilisateur:Arkbot/test', res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
+			#bot.append('Discussion_' + sys.argv[1], res + 'Machinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
+			bot.append('Utilisateur:Arkbot/test', res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute), 'Décompte provisoire des votes')
 			bot.logout()
 		else:
 			print res

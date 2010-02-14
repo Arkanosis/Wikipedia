@@ -196,7 +196,7 @@ class Arkbot(object):
 				query += '%s=%s&' % arg
 			query += 'format=json&rclimit=%s' % min(int(rclimit), _maxApiRequest)
 			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
-			for change in response.query.recentchanges:
+			for change in response.recentchanges:
 				yield change
 			rclimit = int(rclimit) - _maxApiRequest
 			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
@@ -251,7 +251,7 @@ class Arkbot(object):
 			if arg[1]:
 				query += '%s=%s&' % arg
 		query += 'format=json'
-		return self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+		return self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query).query
 
 	def __post(self, noReturn=False, *args, **kwargs):
 		kwargs['format'] = 'json'
