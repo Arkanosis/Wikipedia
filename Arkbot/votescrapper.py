@@ -23,6 +23,7 @@
 # TODO gérer les votes de Condorcet quand les puces sont des '#'
 
 import collections
+import copy
 import datetime
 import getpass
 import itertools
@@ -35,7 +36,7 @@ import arkbot
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
 _user = r'(\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?\]\]|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
-_condorcetOption = re.compile(r'') # TODO extraire les options
+_condorcetOption = re.compile(r'^\*\s*(?P<option>\w)[-–—]\s*(?P<description>.+)')
 _condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
 _deletedText = re.compile(r'<(?P<tag>del|s)>.*</(?P=tag)>', re.UNICODE)
 
@@ -52,22 +53,14 @@ def extractVotes(page):
 
 	line = 0
 
+	options = {}
 	titleStack = []
 	votes = collections.OrderedDict()
 
-	def addVotes(titleStack, nbVotes, condorcetVotes, condorcetOptions):
-		normalizedVotes = []
-		condorcetOptions = sorted(condorcetOptions)
-		for vote, user in condorcetVotes:
-			separator = '>'
-			for option in condorcetOptions:
-				if vote.find(option) == -1:
-					vote += ' %s %s' % (separator, option)
-					separator = '='
-			normalizedVotes.append((vote, user))
-
+	def addVotes(titleStack, nbVotes, condorcetVotes):
 		if not nbVotes:
 			return
+
 		dic = votes
 		for level in titleStack[:-1]:
 			if level not in dic:
@@ -76,7 +69,18 @@ def extractVotes(page):
 		if nbVotes > 0:
 			dic[titleStack[-1]] = nbVotes
 		elif nbVotes < 0:
-			dic[titleStack[-1]] = normalizedVotes
+			normalizedVotes = []
+			condorcetOptions = sorted(options)
+			for vote, user in condorcetVotes:
+				separator = '>'
+				for option in condorcetOptions:
+					if vote.find(option) == -1:
+						vote += ' %s %s' % (separator, option)
+						separator = '='
+				normalizedVotes.append((vote, user))
+
+			dic[titleStack[-1]] = copy.deepcopy(options), normalizedVotes
+			options.clear()
 
 	onATitle = None
 	while line < len(lines) and not onATitle:
@@ -90,43 +94,65 @@ def extractVotes(page):
 			titleStack.pop()
 		titleStack.append(title)
 		nbVotes = 0
-		condorcetOptions = set()
 		condorcetVotes = []
+
 		while line < len(lines):
+
 			onACountVote = _countVote.match(lines[line])
 			if onACountVote:
 				assert nbVotes >= 0, 'Mixed votes!'
 				nbVotes += 1
-			else:
-				onACondorcetVote = _condorcetVote.match(lines[line])
-				if onACondorcetVote:
-					assert nbVotes <= 0, 'Mixed votes!'
-					nbVotes -= 1
-					vote = translate(onACondorcetVote.group('vote'), {
-						',': '=',
-						'/': '>',
-						' ': '',
-						'\t': '',
-						'>': ' > ',
-						'=': ' = ',
-					}).upper()
-					while vote.find('>  > ') != -1:
-						vote = vote.replace('>  >', '>')
-					user = onACondorcetVote.group('user')
-					if not user:
-						user = onACondorcetVote.group('user2')
-					for option in vote.replace(' ', '').replace('>', '').replace('=', ''):
-						condorcetOptions.add(option)
-					condorcetVotes.append((vote, user))
-				else:
-					onATitle = _title.match(lines[line])
-					if onATitle:
-						addVotes(titleStack, nbVotes, condorcetVotes, condorcetOptions)
-						break
+
+				line +=1
+				continue
+
+			onACondorcetVote = _condorcetVote.match(lines[line])
+			if onACondorcetVote:
+				assert nbVotes <= 0, 'Mixed votes!'
+				nbVotes -= 1
+				vote = translate(onACondorcetVote.group('vote'), {
+					',': '=',
+					'/': '>',
+					' ': '',
+					'\t': '',
+					'>': ' > ',
+					'=': ' = ',
+				}).upper()
+				while vote.find('>  > ') != -1:
+					vote = vote.replace('>  >', '>')
+				user = onACondorcetVote.group('user')
+				if not user:
+					user = onACondorcetVote.group('user2')
+				for option in vote.replace(' ', '').replace('>', '').replace('=', ''):
+					if option not in options:
+						print '%s has voted %s in section %s, which is not a possible option (possibles options are %s)' % (user, option, titleStack, options.keys())
+						vote = translate(vote, {
+							option + ' > ': '',
+							option + ' = ': '',
+							' > ' + option: '',
+							' = ' + option: '',
+						}).replace(option, '')
+				condorcetVotes.append((vote, user))
+
+				line +=1
+				continue
+
+			onACondorcetOption = _condorcetOption.match(lines[line])
+			if onACondorcetOption:
+				assert nbVotes == 0, 'Condorcet option in a vote'
+				options[onACondorcetOption.group('option')] = onACondorcetOption.group('description')
+
+				line += 1
+				continue
+
+			onATitle = _title.match(lines[line])
+			if onATitle:
+				break
+
 			line += 1
 
 		line += 1
-		addVotes(titleStack, nbVotes, condorcetVotes, condorcetOptions)
+		addVotes(titleStack, nbVotes, condorcetVotes)
 	return votes
 
 def results(votes, date, temp):
@@ -152,7 +178,9 @@ def results(votes, date, temp):
 				# TODO déposer un message sur la PDD de ceux qui auraient voté plusieurs fois
 				condorcetVotes = []
 				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title, len(content.values()[0]))
-				for vote, user in content.values()[0]:
+				votes = content.values()[0]
+
+				for vote, user in votes[1]:
 					result += '* %s | %s\n' % (vote, user)
 					condorcetVotes.append({})
 					rangs = vote.replace(' ', '').split('>')
@@ -165,10 +193,11 @@ def results(votes, date, temp):
 				options.sort()
 
 				result += '{{boîte déroulante/début|titre=Décompte selon la [[méthode Condorcet]]}}\n'
-				result += '\'\'Options possibles : '
-				for option in options[:-1]:
-					result += '%s, ' % option
-				result += options[-1] + '\'\'\n\n'
+				result += '\'\'Options possibles :\'\'\n'
+				for option in options:
+					result += '* %s — %s\n' % (option, votes[0][option])
+
+				result += '\n\'\'Duels :\'\'\n'
 
 				scores = {}
 				maxScore = len(options) - 1
@@ -200,9 +229,8 @@ def results(votes, date, temp):
 
 				if winners:
 					result += '\nVainqueurs potentiels :\n'
-					for winner in winners[:-1]:
-						result += '* %s\n' % winner
-					result += '* %s\n' % winners[-1]
+					for winner in winners:
+						result += '* %s — %s\n' % (winner, votes[0][winner])
 				else:
 					result += '\nPas de vainqueur potentiel'
 
