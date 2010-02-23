@@ -38,6 +38,7 @@ _user = r'(\[\[(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisateur|ser)([ _][Tt]al
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
 _condorcetOption = re.compile(r'^\*\s*(?P<option>\w)[-–—]\s*(?P<description>.+)')
 _condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\s*([=,>/]+\s*\w\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
+_nonCondorcetVote = re.compile(r'^\*[^:].*%s.*$' % _user, re.UNICODE)
 _deletedText = re.compile(r'<(?P<tag>del|s|ref)>.*</(?P=tag)>', re.UNICODE)
 
 def translate(string, translations):
@@ -70,6 +71,7 @@ def extractVotes(page):
 			dic[titleStack[-1]] = nbVotes
 		elif nbVotes < 0:
 			normalizedVotes = []
+			options['Z'] = 'Aucune de ces propositions'
 			condorcetOptions = sorted(options)
 			for vote, user in condorcetVotes:
 				separator = '>'
@@ -137,6 +139,18 @@ def extractVotes(page):
 				line +=1
 				continue
 
+			onANonCondorcetVote = _nonCondorcetVote.match(lines[line])
+			if onANonCondorcetVote and nbVotes < 0:
+				nbVotes -= 1
+				user = onANonCondorcetVote.group('user')
+				if not user:
+					user = onANonCondorcetVote.group('user2')
+				print '%s has voted "none of this options" in section %s' % (user, titleStack)
+				condorcetVotes.append(('Z', user))
+
+				line += 1
+				continue
+
 			onACondorcetOption = _condorcetOption.match(lines[line])
 			if onACondorcetOption:
 				assert nbVotes == 0, 'Condorcet option in a vote'
@@ -172,9 +186,25 @@ def results(votes, date, temp):
 				winner = max(votes, key=lambda x: x[1])[1]
 				for option, nbVotes in votes:
 					if nbVotes == winner:
-						result += '|-{{ligne verte}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+						if option == 'Pour':
+							result += '|-{{ligne verte}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+						elif option == 'Contre':
+							result += '|-{{ligne rouge}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+						elif option == 'Neutre':
+							result += '|-{{ligne grise}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+						else:
+							result += '|-{{ligne jaune}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 					else:
 						result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
+				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Contre', 'Neutre')]:
+					result += '|-\n|colspan="2"|\n'
+					ratio = float(votes[0][1]) / (votes[0][1] + votes[1][1]) * 100
+					if ratio > 50:
+						result += '|-{{ligne verte}}\n|\'\'\'Pour / (Pour + Contre) \'\'\'\n|{{Avancement|%.f}}\n' % ratio
+					elif ratio < 50:
+						result += '|-{{ligne rouge}}\n|\'\'\'Pour / (Pour + Contre) \'\'\'\n|{{Avancement|%.f}}\n' % ratio
+					else:
+						result += '|-{{ligne grise}}\n|\'\'\'Pour / (Pour + Contre) \'\'\'\n|{{Avancement|%.f}}\n' % ratio
 				result += '|}\n'
 			else:
 				# TODO contrôler que personne n'a voté deux fois, si c'est le cas, ne pas prendre le vote en compte, et le marquer à côté
@@ -278,8 +308,8 @@ if __name__ == '__main__':
 		res = results(votes, date, temp)
 
 		if publish:
-			bot.append('Discussion_' + sys.argv[1], 'Décompte provisoire des votes', res + 'Machinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute))
-			#bot.edit('Utilisateur:Arkbot/test', 'Décompte provisoire des votes (test)', res + 'Avec mes salutations les plus automatiques' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute))
+			bot.append('Discussion_' + sys.argv[1], 'Décompte des votes', res + 'Vous qui êtes humains, n\'oubliez pas de prendre en compte les commentaires de vote.\n\nMachinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute))
+			#bot.edit('Utilisateur:Arkbot/test', 'Décompte des votes', res + 'Vous qui êtes humains, n\'oubliez pas de prendre en compte les commentaires de vote.\n\nMachinalement' + arkbot._signature % (date.day, arkbot._monthName[date.month - 1], date.year, date.hour, date.minute))
 			bot.logout()
 		else:
 			print res

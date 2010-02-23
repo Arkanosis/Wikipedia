@@ -53,7 +53,7 @@ _trainerName = 'Arkanosis'
 _version = '0.1 alpha'
 _userAgent = 'Arkbot/' + _version
 
-_signature = ' — [[Utilisateur:%s|%s]]&nbsp;<sup>[[Discussion utilisateur:%s|✉]]</sup>&nbsp;<small><span class="plainlinks">[http://github.com/Arkanosis/Wikipedia/tree/master/Arkbot/ <nowiki>[mes sources]</nowiki>]</span></small>' % (_botName, _botName, _trainerName) + ' %s %s %s à %s:%s (CET)'
+_signature = ' — [[Utilisateur:%s|%s]]&nbsp;<sup>[[Discussion utilisateur:%s|✉]]</sup>&nbsp;<small><span class="plainlinks">[http://github.com/Arkanosis/Wikipedia/tree/master/Arkbot/ <nowiki>[mes sources]</nowiki>]</span></small>' % (_botName, _botName, _trainerName) + ' %s %s %s à %s:%s (CET)'
 
 _diff = 'vimdiff'
 
