@@ -196,10 +196,27 @@ class Arkbot(object):
 				query += '%s=%s&' % arg
 			query += 'format=json&rclimit=%s' % min(int(rclimit), _maxApiRequest)
 			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
-			for change in response.recentchanges:
+			for change in response.query.recentchanges:
 				yield change
 			rclimit = int(rclimit) - _maxApiRequest
 			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
+
+	def __articles(self, cmlimit=10, *args, **kwargs):
+		return []
+# 		while rclimit > 0:
+# 			query = 'action=query&list=categorymembers&'
+# 			for arg in kwargs.items():
+# 				query += '%s=%s&' % arg
+# 			query += 'format=json&cmlimit=%s' % min(int(rclimit), _maxApiRequest)
+# 			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+# 			print response
+# 			for article in response.query.articles:
+# 				yield article
+# 			rclimit = int(rclimit) - _maxApiRequest
+# 			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
+
+	def __suffixes(self, cmlimit=10, *args, **kwargs):
+		return []
 
 	def __diff(self, page, oldid, newid, lang=_lang):
 		query = 'title=%s&diff=%s&oldid=%s' % (page.replace(' ', '_'), newid, oldid)
@@ -426,6 +443,9 @@ class Arkbot(object):
 
 	def recent(self, *args, **kwargs):
 		return self.__recent(*args, **kwargs)
+
+	def articles(self, *args, **kwargs):
+		return self.__articles(*args, **kwargs)
 
 if __name__ == '__main__':
 	print 'Arkbot %s (prototype)' % _version
