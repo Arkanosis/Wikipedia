@@ -231,8 +231,10 @@ def results(votes, date, temp):
 							result += '|-{{ligne jaune}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 					else:
 						result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
-				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Contre', 'Neutre'), ('Oui', 'Non'), ('Oui', 'Non', 'Neutre')]:
+				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Neutre'), ('Contre', 'Neutre'), ('Pour', 'Contre', 'Neutre'), ('Oui', 'Non'), ('Oui', 'Neutre'), ('Non', 'Neutre'), ('Oui', 'Non', 'Neutre')]: # TODO faire plus simple
 					result += '|-\n|colspan="2"|\n'
+					if votes[1][0] == 'Neutre':
+						votes[1] = ({ 'Pour': 'Contre', 'Contre': 'Pour', 'Oui': 'Non', 'Non': 'Oui' }[votes[0][0]], 0)
 					ratio = float(votes[0][1]) / (votes[0][1] + votes[1][1]) * 100
 					if ratio > 50:
 						result += '|-{{ligne verte}}\n|\'\'\'%s / (%s + %s) \'\'\'\n|{{Avancement|%.f}}\n' % (votes[0][0], votes[0][0], votes[1][0], ratio)
