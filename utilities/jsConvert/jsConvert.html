@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>jsConvert</title>
+    <script type="application/ecmascript" src="jsConvert.js"></script>
+  </head>
+  <body>
+    <h1>jsConvert 0.1.0</h1>
+    <form id="jsConvert" onsubmit="javascript:test(); return false">
+      <fieldset>
+	<legend>Test</legend>
+	<label for="regexp">Regexp</label>
+	<br />
+	<textarea id="regexp" rows="5" cols="120"></textarea>
+	<br />
+	<label for="flags">Flags</label>
+	<br />
+	<input type="text" id="flags" />
+	<br />
+	<label for="replacement">Replacement</label>
+	<br />
+	<input type="text" id="replacement" />
+	<br />
+	<label for="text">Text</label>
+	<br />
+	<textarea id="text" rows="10" cols="120"></textarea>
+	<br />
+	<input type="submit" value="Test" />
+      </fieldset>
+    </form>
+    <p id="result"></p>
+    <textarea id="analysis" rows="10" cols="120"></textarea>
+  </body>
+</html>
