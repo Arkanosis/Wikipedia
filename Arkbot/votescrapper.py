@@ -37,7 +37,7 @@ import arkbot
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
 _user = r'((\[\[|{{)(:?w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisat(eur|rice)|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?(\]\]|}})|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
-_condorcetOption = re.compile(r'^\*\s*(?P<option>\w\w?)\s*[-–—:]\s*(?P<description>.+)')
+_condorcetOption = re.compile(r'^\*\s*(\'\'\')?(?P<option>\w\w?)\s*[-–—:]\s*(\'\'\')?(?P<description>.+)')
 _condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\w?\s*([=,>/]+\s*\w\w?\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
 _nonCondorcetVote = re.compile(r'^\*[^:].*%s.*$' % _user, re.UNICODE)
 _deletedText = re.compile(r'<(?P<tag>del|s|ref)>.*</(?P=tag)>', re.UNICODE)
@@ -231,8 +231,10 @@ def results(votes, date, temp):
 							result += '|-{{ligne jaune}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 					else:
 						result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
-				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Contre', 'Neutre'), ('Oui', 'Non'), ('Oui', 'Non', 'Neutre')]:
+				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Neutre'), ('Contre', 'Neutre'), ('Pour', 'Contre', 'Neutre'), ('Oui', 'Non'), ('Oui', 'Neutre'), ('Non', 'Neutre'), ('Oui', 'Non', 'Neutre')]: # TODO faire plus simple
 					result += '|-\n|colspan="2"|\n'
+					if votes[1][0] == 'Neutre':
+						votes[1] = ({ 'Pour': 'Contre', 'Contre': 'Pour', 'Oui': 'Non', 'Non': 'Oui' }[votes[0][0]], 0)
 					ratio = float(votes[0][1]) / (votes[0][1] + votes[1][1]) * 100
 					if ratio > 50:
 						result += '|-{{ligne verte}}\n|\'\'\'%s / (%s + %s) \'\'\'\n|{{Avancement|%.f}}\n' % (votes[0][0], votes[0][0], votes[1][0], ratio)
