@@ -319,15 +319,19 @@ class Arkbot(object):
 		return text
 
 	def login(self, password):
+		def checkResponse(response):
+			if not response.login:
+				raise ApiException('%s (on login)' % response)
+			if response.login.result in ['NoName', 'NotExists', 'Illegal']:
+				raise ApiException('Bad user name (on login)')
+			if response.login.result in ['EmptyPass', 'WrongPass']:
+				raise ApiException('Bad password (on login)')
+			if response.login.result == 'Throttled':
+				raise ApiException('Too many login attempts, please wait for %s seconds and retry (on login)' % response.login.wait)
 		apiResponse = self.__post(action='login', lgname=self.__name, lgpassword=password)
-		if not apiResponse.login:
-			raise ApiException('%s (on login)' % apiResponse)
-		if apiResponse.login.result in ['NoName', 'NotExists', 'Illegal']:
-			raise ApiException('Bad user name (on login)')
-		if apiResponse.login.result in ['EmptyPass', 'WrongPass']:
-			raise ApiException('Bad password (on login)')
-		if apiResponse.login.result == 'Throttled':
-			raise ApiException('Too many login attempts, please wait for %s seconds and retry (on login)' % apiResponse.login.wait)
+		checkResponse(apiResponse)
+		apiResponse = self.__post(action='login', lgname=self.__name, lgpassword=password, lgtoken=apiResponse.login.token)
+		checkResponse(apiResponse)
 
 	def logout(self):
 		self.__post(action='logout', noReturn=True)
