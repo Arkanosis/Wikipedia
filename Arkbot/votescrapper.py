@@ -35,7 +35,7 @@ import sys
 import arkbot
 
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
-_user = r'((\[\[|{{)(:w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisat(eur|rice)|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?(\]\]|}})|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
+_user = r'((\[\[|{{)(:?w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisat(eur|rice)|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?(\]\]|}})|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
 _countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
 _condorcetOption = re.compile(r'^\*\s*(?P<option>\w\w?)\s*[-–—:]\s*(?P<description>.+)')
 _condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\w?\s*([=,>/]+\s*\w\w?\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
