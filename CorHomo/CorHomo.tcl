@@ -1,9 +1,14 @@
 #################################################
 #	Programme écrit par Escaladix
-#	http://fr.wikipedia.org/wiki/Utilisateur:Escaladix
+#	  http://fr.wikipedia.org/wiki/Utilisateur:Escaladix
 #	Distribué sous licence GNU GPL (http://www.gnu.org/)
+#
 #	Correction sur la version 1.3.3 par Jjvaca
-#	http://es.wikipedia.org/wiki/Usuario:Jjvaca
+#	  http://es.wikipedia.org/wiki/Usuario:Jjvaca
+#	Correction sur la version 1.4.1 par Litlok
+#         http://fr.wikipedia.org/wiki/Utilisateur:Litlok
+#	Correction sur la version 1.4.2 par Arkanosis
+#         http://fr.wikipedia.org/wiki/Utilisateur:Arkanosis
 #################################################
 
 #!/bin/sh
