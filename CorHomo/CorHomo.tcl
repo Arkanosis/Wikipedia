@@ -399,7 +399,7 @@ proc envoi {} {
 	set adresseget "http://$langue.wikipedia.org/w/index.php?title=[lindex [lindex $llien $selectpage] 0]&action=edit"
 	set adressepost "http://$langue.wikipedia.org/w/index.php?title=[lindex [lindex $llien $selectpage] 0]&action=submit"
 	#ident "http://$langue.wikipedia.org/w/index.php?title=Special:Userlogin&action=submitlogin"
-	while {[ident "http://$langue.wikipedia.org/w/index.php?title=Special:Userlogin&action=submitlogin"]!=1} {}
+	while {[ident "http://$langue.wikipedia.org/w/index.php?title=Spécial:Connexion&action=submitlogin"]!=1} {}
 	#set comment "Envoi de la page"
 	set comment [lindex $langues 41]
 	set recup [getpage $adresseget]
