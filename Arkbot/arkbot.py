@@ -260,7 +260,7 @@ class Arkbot(object):
 	def __fetch(self, page, lang=_lang):
 		return self.__request(_rawUrl + 'action=raw&title=' + page.replace(' ', '_'), lang=lang).read()
 
-	def __get(self, action='query', *args, **kwargs):
+	def __get(self, action='query', lang=_lang, *args, **kwargs):
 		query = ''
 		if action:
 			query = 'action=%s&' % action
@@ -268,19 +268,19 @@ class Arkbot(object):
 			if arg[1]:
 				query += '%s=%s&' % arg
 		query += 'format=json'
-		return self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query).query
+		return self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_'), lang=lang), query).query
 
-	def __post(self, noReturn=False, *args, **kwargs):
+	def __post(self, noReturn=False, lang=_lang, *args, **kwargs):
 		kwargs['format'] = 'json'
 		query = {}
 		for parameter, value in kwargs.items():
 			if kwargs[parameter]:
 				query[parameter] = value
 		query = urllib.urlencode(query)
-		return self.__handleApiResponse(self.__request(_apiUrl, query, _postHeaders), query, noReturn=noReturn)
+		return self.__handleApiResponse(self.__request(_apiUrl, query, _postHeaders, lang=lang), query, noReturn=noReturn)
 
-	def __shouldStop(self):
-		response = self.__get(meta='userinfo', uiprop='hasmsg')
+	def __shouldStop(self, lang=_lang):
+		response = self.__get(meta='userinfo', uiprop='hasmsg', lang=lang)
 		if response.userinfo.anon is not None:
 			return True
 		return False
@@ -339,24 +339,24 @@ class Arkbot(object):
 	def info(self, *pages):
 		return self.__get(titles=string.join(pages, '|'))
 
-	def read(self, page):
-		return self.__fetch(page)
+	def read(self, page, lang=_lang):
+		return self.__fetch(page, lang)
 
 	def diff(self, page, oldid, newid):
 		return self.__diff(page, oldid, newid)
 
-	def edit(self, page, summary, text, minor=False, bot=False, oldText=None):
+	def edit(self, page, summary, text, minor=False, bot=False, oldText=None, lang=_lang):
 		text = self.__clean(text)
 		summary = 'bot : ' + summary
 		self.__logger.info('Editing page "%s" with summary "%s"' % (page, summary))
 		if oldText and not self.__confirm(page, oldText, text, summary):
 			self.__logger.info('  => edition not confirmed by user')
 			return
-		if self.__shouldStop():
+		if self.__shouldStop(lang):
 			raise ApiException('The bot has been asked to stop editing the wiki, or is not logged in anymore')
-		pageInfo = self.__get(titles=page, prop='info|revisions', intoken='edit').pages.values()[0]
+		pageInfo = self.__get(titles=page, prop='info|revisions', intoken='edit', lang=lang).pages.values()[0]
 
-		apiResponse = self.__post(action='edit', title=page, summary=summary, text=text, token=pageInfo.edittoken, basetimestamp=pageInfo.starttimestamp, minor=minor, bot=bot)
+		apiResponse = self.__post(action='edit', title=page, summary=summary, text=text, token=pageInfo.edittoken, basetimestamp=pageInfo.starttimestamp, minor=minor, bot=bot, lang=lang)
 		if apiResponse.edit.result != 'Success':
 			raise ApiException('Unable to edit page "%s" with summary "%s" and text "%s"' % (page, summary, text))
 

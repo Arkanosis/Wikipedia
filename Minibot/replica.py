@@ -26,19 +26,19 @@ import urllib2
 # The user name of your SUL account
 userName = 'Arktest'
 
-# The wikis you want iKiwi to be installed to
-iKiwiDistantWikis = ['de', 'en', 'es', 'fr', 'it', 'ja', 'nl', 'pl', 'pt', 'ru', 'sv']
+# The wiki that you want to copy from
+sourceWiki = 'fr'
 
-# If you want to add the articles to your watchlist after using iKiwi
-iKiwiWatchMain = True
+# The wikis that you want to copy to
+destinationWikis = ['de', 'en', 'es', 'it', 'ja', 'nl', 'pl', 'pt', 'ru', 'sv']
 
-# If you want to add the any page to your watchlist after using iKiwi
-iKiwiWatchOthers = True
+# The page to copy
+pageName = 'User:%s/iKiwi.js' % userName
 
 ###########################################################################################
 
-_app = 'iKiwi 0.4 installer'
-_version = '0.1 alpha'
+_app = 'iKiwi 0.4 replica'
+_version = '0.1 alpha 2'
 _userAgent = 'Minibot/' + _version
 
 _get = {
@@ -52,11 +52,6 @@ _post = {
 	'Accept-encoding': 'gzip',
 	'User-Agent': _userAgent,
 }
-
-_install = re.compile(r'\s*importScript\s*\(\s*(?P<quote>\'|")User:Arkanosis/iKiwi.js(?P=quote)\s*\)\s*;\s*')
-_distantWikis = re.compile(r'\s*iKiwiDistantWikis\s+=\s+\[(\s*(?P<quote>\'|")[^\'"]+(?P=quote)\s*,?)*\s*\]\s*;\s*')
-_iKiwiWatchMain = re.compile(r'\s*var\s+iKiwiWatchMain\s+=\s+(true|false)\s*;\s*')
-_iKiwiWatchOthers = re.compile(r'\s*var\s+iKiwiWatchOthers\s+=\s+(true|false)\s*;\s*')
 
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
 urllib2.install_opener(opener)
@@ -82,20 +77,18 @@ def request(wiki, action, parameters, mode='get', src='api'):
 		headers = _post
 	return json.load(read(url + parameters, data, headers))
 
+
 def install(wiki):
-	print 'Installing on', wiki,
+	print 'Copying to', wiki,
 	try:
-		monobook = request(wiki, 'raw', '&title=User:%s/monobook.js' % userName, src='index')
+		page = request(wiki, 'edit', '&titles=%s&prop=info|revisions&intoken=edit' % pageName)
+		page = request(wiki, 'edit', '&title=%s' % pageName, src='index')
 	except urllib2.HTTPError, e:
 		if e.code == 404:
-			monobook = ''
+			page = ''
 		else:
 			print '→ ERROR'
 			return
-
-	installed = _install.search(monobook)
-	if not installed:
-		monobook += '\nimportScript(\'User:Arkanosis/iKiwi.js\');'
 
 	# TODO handle options
 	print '→ OK'
@@ -110,6 +103,7 @@ arkanosis@gmail.com
 """ % (_app, _userAgent)
 
 response = request('fr', 'login', {'lgname': userName, 'lgpassword': getpass.getpass('Password for user %s? ' % userName)}, _post)
+print response
 if response['login']['result'] in ['NoName', 'NotExists', 'Illegal']:
 	print 'Bad user name'
 	sys.exit(2)
@@ -120,5 +114,14 @@ elif response['login']['result'] in ['Throttled']:
 	print 'Too many login attempts, please wait for %s seconds and retry' % response['login']['wait']
 	sys.exit(2)
 
-for wiki in iKiwiDistantWikis:
+print 'Copying from', sourceWiki
+try:
+	page = request(sourceWiki, 'raw', '&title=%s' % pageName, src='index')
+except urllib2.HTTPError, e:
+	print '→ ERROR: unable to read the source page'
+	sys.exit(1)
+
+print page
+
+for wiki in destinationWikis:
 	install(wiki)

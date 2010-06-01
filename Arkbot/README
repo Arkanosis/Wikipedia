@@ -1,10 +1,9 @@
 Arkbot (prototype)
-(C) 2009 Arkanosis
+(C) 2009-2010 Arkanosis
 arkanosis@gmail.com
 
 Ce bot est un *prototype* pour Arkbot et n'est pas destiné à un usage en production
-  http://github.com/Arkanosis/Wikipedia/Arkbot (prototype)
-  http://trac-git.assembla.com/arkbot/ (version architecturée)
+  http://github.com/Arkanosis/Wikipedia/Arkbot
 
 Ce bot est mis à disposition sous licence MIT
   http://www.opensource.org/licenses/mit-license.php

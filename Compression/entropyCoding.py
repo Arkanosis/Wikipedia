@@ -109,8 +109,9 @@ def golomb(value, k):
     q = value / k
     return (unary(q) + ' ' + truncatedBinary(value - q * k, k)).rstrip()
 
-def rice(value, parameter):
-    pass
+def rice(value, k):
+    q = value / pow(k)
+    return (unary(q) + ' ' + b(value, k)).rstrip()
 
 def shannonFano(value):
     pass
@@ -130,28 +131,31 @@ def range(value):
 def codes(number, size):
     return [
         ('Dec', str(number)),
-        ('Unary', unary(number)),
+#        ('Unary', unary(number)),
         ('Binary', optimalBinary(number, size)),
-        ('Trunc', truncatedBinary(number, size)),
-        ('Gamma', gamma(number)),
-        ('Delta', delta(number)),
-        ('Omega', omega(number)),
-        ('Zeta 1', zeta(number, 1)),
-        ('Zeta 2', zeta(number, 2)),
-        ('Zeta 3', zeta(number, 3)),
-        ('Zeta 4', zeta(number, 4)),
-        ('Fibo', fibonacci(number)),
-        ('Leven', levenshtein(number)),
+#        ('Trunc', truncatedBinary(number, size)),
+#        ('Gamma', gamma(number)),
+#        ('Delta', delta(number)),
+#        ('Omega', omega(number)),
+#        ('Zeta 1', zeta(number, 1)),
+#        ('Zeta 2', zeta(number, 2)),
+#        ('Zeta 3', zeta(number, 3)),
+#        ('Zeta 4', zeta(number, 4)),
+#        ('Fibo', fibonacci(number)),
+#        ('Leven', levenshtein(number)),
 #                 ('Erod', evenRodeh(number)),
 #                 ('Stout', stout(number)),
-        ('Golo 1', golomb(number, 1)),
-        ('Golo 2', golomb(number, 2)),
-        ('Golo 3', golomb(number, 3)),
-        ('Golo 4', golomb(number, 4)),
-        ('Golo 5', golomb(number, 5)),
-        ('Golo 10', golomb(number, 10)),
-        ('Golo 16', golomb(number, 16)),
-#                 ('Rice', rice(number, parameter)),
+#        ('Golo 1', golomb(number, 1)),
+#        ('Golo 2', golomb(number, 2)),
+#        ('Golo 3', golomb(number, 3)),
+#        ('Golo 4', golomb(number, 4)),
+#        ('Golo 5', golomb(number, 5)),
+#        ('Golo 10', golomb(number, 10)),
+#        ('Golo 16', golomb(number, 16)),
+        ('Rice 1', rice(number, 1)),
+        ('Rice 2', rice(number, 2)),
+        ('Rice 3', rice(number, 3)),
+        ('Rice 4', rice(number, 4)),
 #                 ('Shfa', shannonFano(number)),
 #                 ('Huff', huffman(number)),
 #                 ('Shfael', shannonFanoElias(number)),
