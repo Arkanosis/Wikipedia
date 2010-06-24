@@ -23,7 +23,7 @@ with open(sys.argv[1]) as votes_bruts:
     for vote_brut in votes_bruts:
         votes.append({})
         rangs = vote_brut.replace(' ', '').split('|')[0].split('>')
-        for rang, valeur in itertools.izip(rangs, xrange(len(rangs))):
+        for valeur, rang in enumerate(rangs):
             for option in rang.replace(',', '=').split('='):
                 votes[-1][option] = valeur
 
