@@ -250,10 +250,10 @@ def results(votes, date, temp):
 				condorcetVotes = []
 				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title.replace('\'\'\'', '').replace('\'\'', ''), len(votes[1]))
 				for vote, user in votes[1]:
-					result += '* %s | %s\n' % (vote, user)
+					result += '# %s | %s\n' % (vote, user)
 					condorcetVotes.append({})
 					rangs = vote.replace(' ', '').split('>')
-					for rang, valeur in itertools.izip(rangs, xrange(len(rangs))):
+					for valeur, rang in enumerate(rangs):
 						for option in rang.split('='):
 							condorcetVotes[-1][option] = valeur
 				result += '{{boîte déroulante/fin}}\n'
