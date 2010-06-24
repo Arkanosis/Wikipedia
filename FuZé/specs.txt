@@ -1,0 +1,112 @@
+FuZé (prototype)
+(C) 2010 Arkanosis
+arkanosis@gmail.com
+
+Cet outil est un *prototype* et n'est pas destiné à un usage en production
+  http://github.com/Arkanosis/Wikipedia/FuZé
+
+Ce script est mis à disposition sous licence MIT
+  http://www.opensource.org/licenses/mit-license.php
+
++==============+
+| Architecture |
++==============+
+
+- Entièrement modulaire
+- Abstraction de l'API et du langage via une surcouche (dans l'esprit MooTools / jQuery)
+- Toutes les fonctionnalités accessibles au clavier (raccourcis affichés à l'écran)
+- Support de popups
+
+fuze = new FuZe();
+fuze.setConfig({
+  'generators': [
+    {
+      'name': 'recentchanges',
+      'params': {
+        'ip': true,
+	'bot': false,
+      }
+    }
+  ],
+  'filters': [
+  ],
+
+});
+  .addGenerator('recentchanges')
+    .setParam('ip', true)
+  .
+
++=========+
+| Modules |
++=========+
+ → générateurs
+  . recentchanges (paramètre : ip, confirmed, patrolled, bot...)
+  . articles d'une catégorie
+  . liste d'articles
+  . contributions d'une liste d'utilisateurs
+  . historique d'un article
+  . liste de suivi
+  . nouvelles pages
+  . journal abusefilter
+ → filtres
+  . liste de contributeurs
+  . liste d'articles
+  . liste de regexp (inclusion ou exclusion) sur l'ajout / suppression / résumé / nom d'utilisateur...
+ → affichage
+  . composite (regroupe plusieurs affichages sur le même écran)
+  . liste (scrollable à l'infini, possibilité de scroll automatique en temps réel)
+  . article (avec modification inline)
+  . diff (boutons de validation / revert...) facilement accessibles
+ → actions (actions cumulables /avant/ publication)
+  . xpatrol
+  . iKiwi
+  . ajout de bandeaux, ébauche, portail, catégorie, infobox...
+  . correction d'homonymies, doubles redirections
+  . requête aux administrateurs
+  . messages aux contributeurs (avertissements, remerciements...), messages personnalisés
+  . replacement (sed)
+  . annulation de l'action précédente (restaurer une modif révertée par erreur, retirer un avertissement...)
+  . communication avec un bot anti-récidive (indication de l'utilisateur et du type de modification qu'il n'a pas le droit de reproduire)
+
++======================+
+| Critères de filtrage |
++======================+
+
+- Combinaisons de filtres (et, ou, xor)
+- Filtres numériques (>, <)
+- Nombre de contribs utilisateur
+- Dernières contribs d'article uniquement
+- Tags abusefilter
+- Cacher certains status (sysop, autoconfirmed, ip...)
+- Taille de la modif (+, -...)
+- Taille de la plus grosse différence
+
++=======================+
+| Traitements possibles |
++=======================+
+
+- Marquer comme relu
+- Annuler => sous menu "raison"
+- Révoquer => sous menu "raison"
+- Blanchir => sous menu "raison"
+- Ajouter un bandeau => sous menu "bandeau"
+
++==========================+
+| Racourcis clavier FuzeRC |
++==========================+
+
+À porter dèjà dans LiveRC (inspiré de GMail) :
+
+ - j : modif précédente
+ - k : modif suivante
+ - o / entrée : afficher le diff / la nouvelle page
+ - e : marque comme relue et masquer
+ - r : revert (déplace dans le champ de résumé, puis entrée pour confirmer)
+ - a : avertissement (flêches pour choisir, puis entrée pour valide)
+ - g : retour à la liste des contributions
+ - m : ignorer les révocations
+ - ? : aide (echap pour quitter)
+ - c-r : efface les rouges
+ - c-j : efface les jaunes
+ - c-v : efface les verts
+ - c-b : efface les blancs
