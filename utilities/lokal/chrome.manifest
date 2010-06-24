@@ -1,0 +1,3 @@
+content lokal content/
+
+overlay chrome://browser/content/browser.xul chrome://lokal/content/browser.xul
