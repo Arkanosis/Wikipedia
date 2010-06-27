@@ -21,17 +21,16 @@ _nbArticlesPerSubSection = 33
 _nbArticlesPerSection = 99
 _nbArticlesPerPage = 495
 
-# TODO
-# Publier dans
-#   Projet:Portails/Articles sans portail/Palette (palette apposée à toutes les pages)
+_rootPage = 'Projet:Portails/Articles sans portail'
+_dump = '22 juin 2010'
 
 def publishPage(text, first, last, page):
-	bot.edit('Utilisateur:Arkbot/test', 'Articles sans portail, %i à %i (page %i)' % (first, last, page), ("""{{Mise à jour bot|Arkanosis}}
+	bot.edit(_rootPage + '/%i' % page, 'Articles sans portail au %s, %i à %i' % (_dump, first, last), ("""{{Mise à jour bot|Arkanosis}}
 
-== Articles sans portail (%i à %i) ==\n\nVous pouvez utiliser [[Utilisateur:Dr Brains/PagesSansBandeauDePortail.js|ce script]] pour ajouter rapidement des portails sur ces articles.\n\nDernière mise à jour le ~~~~~""" % (first, last)) + text + """
+== Articles sans portail (%i à %i) ==\n\nVous pouvez utiliser [[Utilisateur:Dr Brains/PagesSansBandeauDePortail.js|ce script]] pour ajouter rapidement des portails sur ces articles.\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (first, last, _dump)) + text + """
 
 {{Palette Articles sans portail}}
-""")
+""", bot=True)
 
 if __name__ == '__main__':
 	print 'NoPortal 0.1'
@@ -56,13 +55,13 @@ if __name__ == '__main__':
 			page = ''
 			index = """{{Mise à jour bot|Arkanosis}}
 
-== Articles sans portail ==\n\nVous pouvez utiliser [[Utilisateur:Dr Brains/PagesSansBandeauDePortail.js|ce script]] pour ajouter rapidement des portails sur ces articles.\n\nDernière mise à jour le ~~~~~
-"""
+== Articles sans portail ==\n\nVous pouvez utiliser [[Utilisateur:Dr Brains/PagesSansBandeauDePortail.js|ce script]] pour ajouter rapidement des portails sur ces articles.\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
+""" % _dump
 			model = """{{Méta palette de navigation
  | modèle    = Palette Articles sans portail
  | étatboîte = autocollapse
- | titre     = [[Projet:Portails/Articles sans portail|Articles sans portail]]
- | liste1    = """
+ | titre     = [[%s|Articles sans portail]]
+ | liste1    = """ % _rootPage
 			section = ''
 			subSection = ''
 			number = 0
@@ -83,12 +82,13 @@ if __name__ == '__main__':
 					startSection = number + 1
 				if not number % _nbArticlesPerPage:
 					publishPage(page, startPage, number, pageNumber)
-					index += '\n# [[Projet:Portails/Articles sans portail/%i|%i à %i]]' % (pageNumber, startPage, number)
-					model += '[[Projet:Portails/Articles sans portail/%i|%i à %i]]{{·}}' % (pageNumber, startPage, number)
+					index += '\n# [[%s/%i|%i à %i]]' % (_rootPage, pageNumber, startPage, number)
+					model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage, pageNumber, startPage, number)
 					pageNumber += 1
 					page = ''
 					startPage = number + 1
-				if not number % (2 * _nbArticlesPerPage):
+				# TODO : sleep(20)
+				if not number % (4 * _nbArticlesPerPage):
 					break
 			if number >= startPage:
 				if number >= startSection:
@@ -97,8 +97,8 @@ if __name__ == '__main__':
 				pageNumber += 1
 		model = model[:-6] + """
 }}"""
-		bot.edit('Utilisateur:Arkbot/test', 'Articles sans portail, index', index)
-		bot.edit('Utilisateur:Arkbot/test', 'Articles sans portail, palette', model)
+		bot.edit(_rootPage, 'Articles sans portail au %s' % _dump, index, bot=True)
+		bot.edit('Modèle:Palette Articles sans portail', 'Articles sans portail au %s' % _dump, model, bot=True)
 
 		bot.logout()
 
