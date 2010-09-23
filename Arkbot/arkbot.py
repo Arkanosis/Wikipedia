@@ -1,4 +1,4 @@
-#! /bin/env python2.7
+#! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 # Arkbot (prototype)
@@ -43,6 +43,7 @@ import StringIO
 import sys
 import subprocess
 import tempfile
+import time
 import urllib
 import urllib2
 import xml.dom.minidom
@@ -63,7 +64,9 @@ _apiUrl = '/w/api.php?assert=user&'
 _rawUrl = '/w/index.php?'
 _searchUrl = _rawUrl + 'title=Spécial:Recherche&search='
 
-_maxApiRequest = 500
+_maxApiRequest = 5000
+_maxRandomApiRequest = 20
+_maxRequestsPerMinute = 10
 
 _monthName = [
 	'janvier', 'février',  'mars',  'avril',  'mai',  'juin',  'juillet',  'août',  'septembre',  'octobre',  'novembre',  'décembre',
@@ -82,12 +85,7 @@ _postHeaders = {
 }
 
 _internalLink = re.compile(r'\[\[[^\]]+\]\]')
-
-_categoryNamespace = {
-	'en': 'category',
-	'fr': 'catégorie',
-	# TODO dump the different values
-}
+_redirect = re.compile(r'^\s*#(?:redirect|redirection|omdirigering|перенаправление|перенапр|redirecionamento|patrz|przekieruj|tam|doorverwijzing|転送|リダイレクト|転送|リダイレクト|rinvia|rinvio|rimando|redirección|redireccion|weiterleitung)\s*\[\[([^\]]+)\]\]', re.IGNORECASE)
 
 class ArkbotException(Exception):
 	def __init__(self, reason):
@@ -132,6 +130,9 @@ class ApiResponse(object):
 						dictionary[item] = items
 		self.__dict__ = dictionary
 		self.__entries = entries
+
+	def __contains__(self, attribute):
+		return attribute in self.__dict__
 
 	def __getattr__(self, attribute):
 		return None
@@ -183,9 +184,6 @@ class Arkbot(object):
 	def __internalLinks(self, text):
 		return [link[2:-2] for link in re.findall(_internalLink, text)]
 
-	def __categories(self, links, lang):
-		return filter(lambda link: link.startWith(_categoryNamespace[lang] + ':'), links)
-
 	def __interWikis(self, links):
 		return filter(lambda link: 0 < link.find(':') < 4 or link.startswith('simple:') or link.startswith('tokipona:'), links)
 
@@ -200,20 +198,45 @@ class Arkbot(object):
 				yield change
 			rclimit = int(rclimit) - _maxApiRequest
 			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
+			time.sleep(60. / _maxRequestsPerMinute)
 
-	def __articles(self, cmlimit=10, *args, **kwargs):
-		return []
-# 		while rclimit > 0:
-# 			query = 'action=query&list=categorymembers&'
-# 			for arg in kwargs.items():
-# 				query += '%s=%s&' % arg
-# 			query += 'format=json&cmlimit=%s' % min(int(rclimit), _maxApiRequest)
-# 			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
-# 			print response
-# 			for article in response.query.articles:
-# 				yield article
-# 			rclimit = int(rclimit) - _maxApiRequest
-# 			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
+	def __random(self, rnlimit=1, *args, **kwargs):
+		while rnlimit > 0:
+			query = 'action=query&list=random&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&rnlimit=%s' % min(int(rnlimit), _maxRandomApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			for page in response.query.random:
+				yield page
+			rnlimit = int(rnlimit) - _maxRandomApiRequest
+			time.sleep(60. / _maxRequestsPerMinute)
+
+	def __articles(self, cmlimit=10, cmnamespace=0, recurse=False, *args, **kwargs):
+		if kwargs['cmtitle'].startswith('Wikipédia:'):
+			return
+		while cmlimit > 0:
+			query = 'action=query&list=categorymembers&cmtitle=%s&cmnamespace=%i&' % ('Category:' + urllib.quote(kwargs['cmtitle']), cmnamespace)
+			for arg in kwargs.items():
+				if arg[0] != 'cmtitle':
+					query += '%s=%s&' % arg
+			query += 'format=json&cmlimit=%s' % min(int(cmlimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			articles = response.query.categorymembers
+			for article in articles:
+				yield article
+			cmlimit = int(cmlimit) - len(articles) # Due to $wgMiserMode, using this may result in fewer than "limit" results
+			if 'query-continue' not in response:
+				break
+			kwargs['cmstartsortkey'] = response['query-continue'].categorymembers.cmcontinue
+			time.sleep(60. / _maxRequestsPerMinute)
+		if recurse:
+			for category in self.__articles(cmlimit=cmlimit, cmnamespace=14, recurse=False, *args, **kwargs):
+				if not cmlimit:
+					break
+				for article in self.__articles(cmtitle=category.title[10:].encode('utf8'), cmlimit=cmlimit, recurse=True):
+					cmlimit -= 1
+					yield article
 
 	def __suffixes(self, cmlimit=10, *args, **kwargs):
 		return []
@@ -339,8 +362,13 @@ class Arkbot(object):
 	def info(self, *pages):
 		return self.__get(titles=string.join(pages, '|'))
 
-	def read(self, page, lang=_lang):
-		return self.__fetch(page, lang)
+	def read(self, page, lang=_lang, followRedirect=False):
+		content = self.__fetch(page, lang)
+		if followRedirect:
+			match = _redirect.match(content)
+			if match:
+				return self.read(match.group(1), lang, followRedirect)
+		return content
 
 	def diff(self, page, oldid, newid):
 		return self.__diff(page, oldid, newid)
@@ -393,7 +421,7 @@ class Arkbot(object):
 
 	def consolidate(self, page):
 		text = {
-			_lang: self.__fetch(page)
+			_lang: self.read(page)
 		}
 		links = self.__internalLinks(text.values()[0])
 
@@ -405,7 +433,7 @@ class Arkbot(object):
 			for interWiki in oldInterWikis:
 				cut = interWiki.find(':')
 				lang = interWiki[:cut]
-				text[lang] = self.__fetch(interWiki[cut + 1:], lang)
+				text[lang] = self.read(interWiki[cut + 1:], lang)
 				otherLinks = self.__internalLinks(text[lang])
 				otherInterWikis = self.__interWikis(otherLinks)
 				for otherInterWiki in otherInterWikis:
@@ -439,7 +467,7 @@ class Arkbot(object):
 		print newInterWikis
 
 	def interwikis(self, page):
-		return self.__interWikis(self.__internalLinks(self.__fetch(page)))
+		return self.__interWikis(self.__internalLinks(self.read(page)))
 
 	def search(self, query, *args, **kwargs):
 		self.__logger.info('Searching for "%s" with parameters %s' % (query, kwargs))
@@ -447,6 +475,9 @@ class Arkbot(object):
 
 	def recent(self, *args, **kwargs):
 		return self.__recent(*args, **kwargs)
+
+	def random(self, *args, **kwargs):
+		return self.__random(*args, **kwargs)
 
 	def articles(self, *args, **kwargs):
 		return self.__articles(*args, **kwargs)
