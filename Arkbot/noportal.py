@@ -1,4 +1,4 @@
-#! /bin/env python2.7
+#! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 # Post v0.1
@@ -10,10 +10,15 @@
 # Ce script est mis à disposition sous licence MIT
 # http://www.opensource.org/licenses/mit-license.php
 
+# TODO Ajouts de portail auto :
+#  - sur les articles dont le titre est en .*(film.*)
+#  - en faisant ressortir les catégories / infoboxes les plus présentes
+
 import datetime
 import getpass
 import logging
 import sys
+import time
 
 import arkbot
 
@@ -21,16 +26,33 @@ _nbArticlesPerSubSection = 33
 _nbArticlesPerSection = 99
 _nbArticlesPerPage = 495
 
+_secondsBetweenEdits = 30
+
 _rootPage = 'Projet:Portails/Articles sans portail'
-_dump = '22 juin 2010'
+_dump = '15 septembre 2010'
+
+_firstPage = 1
+_lastPage = 137 # 189
 
 def publishPage(text, first, last, page):
+	if page < _firstPage:
+		return
+	print 'Mise à jour de la page %i sur %i (%i restantes) @%ippm' % (page, _lastPage, _lastPage - page, 60 / _secondsBetweenEdits)
 	bot.edit(_rootPage + '/%i' % page, 'Articles sans portail au %s, %i à %i' % (_dump, first, last), ("""{{Mise à jour bot|Arkanosis}}
 
-== Articles sans portail (%i à %i) ==\n\nVous pouvez utiliser [[Utilisateur:Dr Brains/PagesSansBandeauDePortail.js|ce script]] pour ajouter rapidement des portails sur ces articles.\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (first, last, _dump)) + text + """
+== Articles sans portail (%i à %i) ==\n\n{{../intro}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (first, last, _dump)) + text + """
 
 {{Palette Articles sans portail}}
 """, bot=True)
+	time.sleep(_secondsBetweenEdits)
+
+def clearPage(page):
+	if page < _firstPage:
+		return
+	bot.edit(_rootPage + '/%i' % page, 'Articles sans portail au %s, page vide' % _dump, """{{Mise à jour bot|Arkanosis}}
+
+{{../intro}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % _dump, bot=True)
+	time.sleep(_secondsBetweenEdits)
 
 if __name__ == '__main__':
 	print 'NoPortal 0.1'
@@ -55,7 +77,7 @@ if __name__ == '__main__':
 			page = ''
 			index = """{{Mise à jour bot|Arkanosis}}
 
-== Articles sans portail ==\n\nVous pouvez utiliser [[Utilisateur:Dr Brains/PagesSansBandeauDePortail.js|ce script]] pour ajouter rapidement des portails sur ces articles.\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
+== Articles sans portail ==\n\n{{/intro}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
 """ % _dump
 			model = """{{Méta palette de navigation
  | modèle    = Palette Articles sans portail
@@ -87,17 +109,20 @@ if __name__ == '__main__':
 					pageNumber += 1
 					page = ''
 					startPage = number + 1
-				# TODO : sleep(20)
-				if not number % (4 * _nbArticlesPerPage):
-					break
 			if number >= startPage:
 				if number >= startSection:
 					page += '\n\n=== %i à %i ===\n\n<ol start="%i" style="-moz-column-count:3; column-count:3;">\n%s</ol>' % (startSection, number, startSection, section)
 				publishPage(page, startPage, number, pageNumber)
+				index += '\n# [[%s/%i|%i à %i]]' % (_rootPage, pageNumber, startPage, number)
+				model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage, pageNumber, startPage, number)
 				pageNumber += 1
 		model = model[:-6] + """
 }}"""
-		bot.edit(_rootPage, 'Articles sans portail au %s' % _dump, index, bot=True)
+
+		for pageNumber in xrange(max(_firstPage, pageNumber), _lastPage + 1):
+			clearPage(pageNumber)
+
+		#bot.edit(_rootPage, 'Articles sans portail au %s' % _dump, index, bot=True)
 		bot.edit('Modèle:Palette Articles sans portail', 'Articles sans portail au %s' % _dump, model, bot=True)
 
 		bot.logout()

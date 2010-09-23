@@ -1,4 +1,4 @@
-#! /bin/env python2.7
+#! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 # Post v0.1
@@ -14,6 +14,7 @@ import datetime
 import getpass
 import logging
 import sys
+import time
 
 import arkbot
 
@@ -35,33 +36,30 @@ if __name__ == '__main__':
 	bot = arkbot.Arkbot(arkbot._botName, arkbot._wiki, logger)
 	try:
 		bot.login(getpass.getpass('Bot password ? '))
-                #with open(sys.argv[1]) as f:
-		#	bot.edit(sys.argv[2], 'Pages liées à aucun portail', f.read())
-		bot.edit(sys.argv[2], 'Pages liées à aucun portail', """{{Mise à jour bot|Arkanosis}}
 
-== Articles sans portail au 1{{er}} avril 2010 ==
-# [[Utilisateur:Arkbot/Articles sans portail/xaa]]
-# [[Utilisateur:Arkbot/Articles sans portail/xab]]
-# [[Utilisateur:Arkbot/Articles sans portail/xac]]
-# [[Utilisateur:Arkbot/Articles sans portail/xad]]
-# [[Utilisateur:Arkbot/Articles sans portail/xae]]
-# [[Utilisateur:Arkbot/Articles sans portail/xaf]]
-# [[Utilisateur:Arkbot/Articles sans portail/xag]]
-# [[Utilisateur:Arkbot/Articles sans portail/xah]]
-# [[Utilisateur:Arkbot/Articles sans portail/xai]]
-# [[Utilisateur:Arkbot/Articles sans portail/xaj]]
-# [[Utilisateur:Arkbot/Articles sans portail/xak]]
-# [[Utilisateur:Arkbot/Articles sans portail/xal]]
-# [[Utilisateur:Arkbot/Articles sans portail/xam]]
-# [[Utilisateur:Arkbot/Articles sans portail/xan]]
-# [[Utilisateur:Arkbot/Articles sans portail/xao]]
-# [[Utilisateur:Arkbot/Articles sans portail/xap]]
-# [[Utilisateur:Arkbot/Articles sans portail/xaq]]
-# [[Utilisateur:Arkbot/Articles sans portail/xar]]
-# [[Utilisateur:Arkbot/Articles sans portail/xas]]
-# [[Utilisateur:Arkbot/Articles sans portail/xat]]
-# [[Utilisateur:Arkbot/Articles sans portail/xau]]
-""")
+
+                #with open(sys.argv[1]) as f:
+		#	bot.edit(sys.argv[2], 'contribs47', f.read(), bot=True)
+		#	bot.edit(sys.argv[2], '-contribs47', '.', bot=True)
+
+
+
+		# for page in ['', '/xaa', '/xab', '/xac', '/xad', '/xae', '/xaf', '/xag', '/xah', '/xai', '/xaj', '/xak', '/xal', '/xam', '/xan', '/xao', '/xap', '/xaq', '/xar', '/xas', '/xat', '/xau']:
+		# 	bot.edit('Utilisateur:Arkbot/Articles sans portail%s' % page, 'Transformation en redirection vers [[Projet:Portails/Articles sans portail]]', '#REDIRECT[[Projet:Portails/Articles sans portail]]', bot=True)
+		# 	time.sleep(6)
+
+
+		_dump = '15 septembre 2010'
+		text = """{{Mise à jour bot|Arkanosis}}
+
+== Pages en impasse ==\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
+
+""" % _dump
+		with open(sys.argv[1]) as inputFile:
+			for line in inputFile:
+				text += '# [[%s]]\n' % line.rstrip()
+		bot.edit('Projet:Pages en impasse/liste des pages en impasse', 'Pages en impasse au %s' % _dump, text, bot=True)
+
 
 		bot.logout()
 
