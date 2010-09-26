@@ -36,9 +36,9 @@ import arkbot
 
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
 _user = r'((\[\[|{{)(:?w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisat(eur|rice)|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?(\]\]|}})|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
-_countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
+_countVote = re.compile(r'FIXME^#[^:].*%s.*$' % _user, re.UNICODE)
 _condorcetOption = re.compile(r'^\*\s*(\'\'\')?(?P<option>\w\w?)\s*[-–—:]\s*(\'\'\')?(?P<description>.+)')
-_condorcetVote = re.compile(r'^\*(\s*<!--\[vote\])?(?P<vote>\s*\w\w?\s*([=,>/]+\s*\w\w?\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
+_condorcetVote = re.compile(r'^(\*|#)(\s*<!--\[vote\])?(?P<vote>\s*\w\w?\s*([=,>/]+\s*\w\w?\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
 _nonCondorcetVote = re.compile(r'^\*[^:].*%s.*$' % _user, re.UNICODE)
 _deletedText = re.compile(r'<(?P<tag>del|s|ref)>.*</(?P=tag)>', re.UNICODE)
 
@@ -63,6 +63,13 @@ def extractVotes(page):
 	line = 0
 
 	options = {}
+	options['1'] = '27 septembre - soit jusqu\'à la fin du week-end'
+	options['2'] = '30 septembre - soit pour un total d\'une semaine'
+	options['3'] = '7 octobre 2010 - soit pour un total de deux semaines'
+	options['4'] = '14 octobre 2010 - soit pour un total de trois semaines'
+	options['5'] = '23 octobre 2010 - soit pour un total d\'un mois'
+	options['6'] = '23 novembre 2010 - soit pour un total de deux mois'
+	options['7'] = 'jusqu\'à ce que le 1 050 000e article soit atteint'
 	titleStack = []
 	votes = collections.OrderedDict()
 
@@ -79,7 +86,7 @@ def extractVotes(page):
 			dic[titleStack[-1]] = nbVotes
 		elif nbVotes < 0:
 			normalizedVotes = []
-			options[_none] = 'Aucune de ces propositions'
+			#options[_none] = 'Aucune de ces propositions'
 			condorcetOptions = sorted(options)
 			for vote, user in condorcetVotes:
 				separator = '>'
@@ -250,7 +257,7 @@ def results(votes, date, temp):
 				condorcetVotes = []
 				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title.replace('\'\'\'', '').replace('\'\'', ''), len(votes[1]))
 				for vote, user in votes[1]:
-					result += '# %s | %s\n' % (vote, user)
+					result += '# %s | {{u\'|%s}}\n' % (vote, user)
 					condorcetVotes.append({})
 					rangs = vote.replace(' ', '').split('>')
 					for valeur, rang in enumerate(rangs):
@@ -304,8 +311,8 @@ def results(votes, date, temp):
 					result += '\nPas de vainqueur potentiel'
 
 		return result
-	while len(votes.items()) == 1:
-		votes = votes.values()[0]
+#	while len(votes.items()) == 1:
+#		votes = votes.values()[0]
 	return '== Décompte%s des votes au %s %s %s à {{Heure|%s|%s}} ==\n' % (temp, date.day, arkbot._monthName[date.month - 1], date.year, str(date.hour).zfill(2), str(date.minute).zfill(2)) + recResults(votes)
 
 if __name__ == '__main__':

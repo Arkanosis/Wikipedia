@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
 		for lang in ['de', 'en', 'es', 'it', 'ja', 'nl', 'pl', 'pt', 'ru', 'sv']:
 			print 'Updating', lang
-			bot.edit('User:%s/iKiwi.js' % sys.argv[1], '0.4.3 → 0.4.4', page, lang=lang)
+			bot.edit('User:%s/iKiwi.js' % sys.argv[1], '0.4.4 → 0.5.0', page, lang=lang)
 
 		bot.logout()
 
