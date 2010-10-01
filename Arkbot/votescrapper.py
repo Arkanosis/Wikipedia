@@ -63,13 +63,13 @@ def extractVotes(page):
 	line = 0
 
 	options = {}
-	options['1'] = '27 septembre - soit jusqu\'à la fin du week-end'
-	options['2'] = '30 septembre - soit pour un total d\'une semaine'
+	options['1'] = '30 septembre 2010 - soit la terminer immédiatement'
+	options['2'] = '30 septembre 2010 - soit pour un total d\'une semaine'
 	options['3'] = '7 octobre 2010 - soit pour un total de deux semaines'
 	options['4'] = '14 octobre 2010 - soit pour un total de trois semaines'
 	options['5'] = '23 octobre 2010 - soit pour un total d\'un mois'
 	options['6'] = '23 novembre 2010 - soit pour un total de deux mois'
-	options['7'] = 'jusqu\'à ce que le 1 050 000e article soit atteint'
+	options['7'] = 'jusqu\'à ce que le 1 050 000e article soit atteint - mais ne pourra pas dépasser le 7 novembre'
 	titleStack = []
 	votes = collections.OrderedDict()
 
@@ -157,6 +157,7 @@ def extractVotes(page):
 				user = onACondorcetVote.group('user')
 				if not user:
 					user = onACondorcetVote.group('user2')
+				user = user.rstrip()
 				for option in vote.replace(' ', '').replace('>', '=').split('='):
 					if option not in options:
 						print '%s has voted %s in section %s, which is not a possible option (possibles options are %s)' % (user, option, titleStack, options.keys())

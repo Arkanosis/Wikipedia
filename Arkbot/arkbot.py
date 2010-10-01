@@ -85,6 +85,7 @@ _postHeaders = {
 }
 
 _internalLink = re.compile(r'\[\[[^\]]+\]\]')
+_interWiki = re.compile(r'(\[\[(?P<lang>[a-z][a-z].?(?:x?-[^\]]+)?|simple|tokipona):(?P<name>[^\]]*)\]\])')
 _redirect = re.compile(r'^\s*#(?:redirect|redirection|omdirigering|перенаправление|перенапр|redirecionamento|patrz|przekieruj|tam|doorverwijzing|転送|リダイレクト|転送|リダイレクト|rinvia|rinvio|rimando|redirección|redireccion|weiterleitung)\s*\[\[([^\]]+)\]\]', re.IGNORECASE)
 
 class ArkbotException(Exception):
