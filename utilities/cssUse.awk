@@ -19,6 +19,7 @@ END {
   title = substr($0, 12, length($0) - 19)
 }
 
-/class=&quot;([^&]* )?video(&quot;| )/ {
+/class=&quot;([^&]* )?(audio|video)(&quot;| )/ {
+  print $0
   class = 1
 }
