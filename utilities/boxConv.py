@@ -5,11 +5,12 @@
 # arkanosis@gmail.com
 
 import re
+import sys
 
 _var = re.compile(r'(\{{3}.*?\|?\}{3}|\'{3}.*?\'{3})')
 _numbered = re.compile(r'(.*?)(?:\d*| actuel(?:le)?)$')
 
-with open('1erministre.tpl') as inputFile:
+with open(sys.argv[1]) as inputFile:
     last = None
     for line in inputFile:
         for var in re.findall(_var, line):
