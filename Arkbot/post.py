@@ -18,6 +18,8 @@ import time
 
 import arkbot
 
+_debug = False
+
 if __name__ == '__main__':
 	print 'Post 0.1'
 	print '(C) 2010 Arkanosis'
@@ -35,7 +37,8 @@ if __name__ == '__main__':
 
 	bot = arkbot.Arkbot(arkbot._botName, arkbot._wiki, logger)
 	try:
-		bot.login(getpass.getpass('Bot password ? '))
+		if not _debug:
+			bot.login(getpass.getpass('Bot password ? '))
 
 
                 #with open(sys.argv[1]) as f:
@@ -49,7 +52,7 @@ if __name__ == '__main__':
 		# 	time.sleep(6)
 
 
-		_dump = '15 septembre 2010'
+		_dump = '18 mars 2011'
 		text = """{{Mise à jour bot|Arkanosis}}
 
 == Pages en impasse ==\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
@@ -58,10 +61,12 @@ if __name__ == '__main__':
 		with open(sys.argv[1]) as inputFile:
 			for line in inputFile:
 				text += '# [[%s]]\n' % line.rstrip()
-		bot.edit('Projet:Pages en impasse/liste des pages en impasse', 'Pages en impasse au %s' % _dump, text, bot=True)
 
-
-		bot.logout()
+		if _debug:
+			print('Projet:Pages en impasse/liste des pages en impasse', 'Pages en impasse au %s' % _dump, text, True)
+		else:
+			bot.edit('Projet:Pages en impasse/liste des pages en impasse', 'Pages en impasse au %s' % _dump, text, bot=True)
+			bot.logout()
 
 	except (arkbot.ArkbotException), e:
 		print e
