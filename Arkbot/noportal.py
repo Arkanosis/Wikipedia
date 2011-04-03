@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Post v0.1
-# (C) 2010 Arkanosis
+# (C) 2010-2011 Arkanosis
 # arkanosis@gmail.com
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
@@ -13,6 +13,11 @@
 # TODO Ajouts de portail auto :
 #  - sur les articles dont le titre est en .*(film.*)
 #  - en faisant ressortir les catégories / infoboxes les plus présentes
+# TODO généraliser le script pour publier n'importe quelle liste d'articles
+#  - ./publishList.py -root 'Projet:Portails' -first 1 -last 127 -delay 10 -dump '3 novembre 2010' -subject 'Articles sans portail'
+#  - ./publishList.py -root 'Projet:Relance' -first 1 -last 5 -delay 10 -dump '3 novembre 2010' -subject 'Articles rarement modifiés' -transform 'contrib'
+# + faire des scripts shell pour chacune des lignes de paramètres fréquemment utilisées
+# TODO accepter plusieurs fichiers en entrée (pour différentes sous pages : musique, acteurs), les traiter à la suite et générer une palette commune
 
 import datetime
 import getpass
@@ -22,36 +27,118 @@ import time
 
 import arkbot
 
-_nbArticlesPerSubSection = 33
-_nbArticlesPerSection = 99
-_nbArticlesPerPage = 495
+_dump = '18 mars 2011'
 
-_secondsBetweenEdits = 30
+_secondsBetweenEdits = 5
 
-_rootPage = 'Projet:Portails/Articles sans portail'
-_dump = '15 septembre 2010'
+_nbColumns = 3
+_nbArticlesPerSection = 100
+_nbSectionsPerPage = 5
 
 _firstPage = 1
-_lastPage = 137 # 189
+_lastPage = sys.maxint
+
+_subPage = False
+
+_mode = 1
+
+_debug = True
+
+if _debug:
+	_secondsBetweenEdits = .1
+
+def link(line):
+	return '[[%s]]' % line
+
+def contrib(line):
+	parts = line.split(' || ')
+	if parts[4] == 'homo':
+		return False
+	return '%s — {{a-court|%s}} ({{u\'|%s}})' % (parts[0], parts[2], parts[3])
+
+_transform = link
+
+if _mode == 1:
+	_lastPage = 69
+	_root = 'Projet:Articles sans portail'
+	_subject = 'Articles sans portail'
+elif _mode == 2:
+	_lastPage = 1
+	_root = 'Projet:Articles sans portail/Album musical'
+	_subject = 'Articles sans portail/Album musical'
+elif _mode == 3:
+	_lastPage = 2
+	_root = 'Projet:Articles sans portail/Acteur'
+	_subject = 'Articles sans portail/Acteur'
+elif _mode == 4:
+	_nbColumns = 1
+	_nbSectionsPerPage = 6
+	_nbArticlesPerSection = 50
+	_lastPage = 2
+	_root = 'Projet:Pages les moins modifiées'
+	_subject = 'Pages les moins modifiées'
+	_transform = contrib
+else:
+	assert False, 'Invalid mode'
+
+if _subPage:
+	_rootPage = _root + '/' + _subject
+else:
+	_rootPage = _root
+
+_summary = _subject.split('/')[0]
+_introPath = '../' * (_subject.count('/') + 1) + 'intro'
+
+if _nbColumns > 1:
+	_columns = ' style="-moz-column-count:%i; column-count:%i;"' % (_nbColumns, _nbColumns)
+else:
+	_columns = ''
+
+_nbArticlesPerSubSection = _nbArticlesPerSection / _nbColumns
+_nbArticlesPerSection = _nbColumns * _nbArticlesPerSubSection
+_nbArticlesPerPage = _nbArticlesPerSection * _nbSectionsPerPage
+
+def editOrDebug(page, summary, text, minor=False, bot=False):
+	# try:
+	# 	parts = page.split('/')
+	# 	nb = int(parts[-1])
+	# 	oldPage = page
+	# 	page = page.replace('Projet:Portails/', 'Projet:')
+	# 	if _debug:
+	# 		print 'move', oldPage, page
+	# 	else:
+	# 		_bot.move(oldPage, page, 'Déplacement de la liste des articles sans portail')
+	# except Exception, e:
+	# 	pass
+
+	if _debug:
+		print 'Page: ', page
+		print 'Summary: ', summary
+		print 'Text: ', text
+		print 'Minor: ', minor
+		print 'bot: ', bot
+	else:
+		_bot.edit(page, summary, text, minor, bot)
 
 def publishPage(text, first, last, page):
 	if page < _firstPage:
 		return
 	print 'Mise à jour de la page %i sur %i (%i restantes) @%ippm' % (page, _lastPage, _lastPage - page, 60 / _secondsBetweenEdits)
-	bot.edit(_rootPage + '/%i' % page, 'Articles sans portail au %s, %i à %i' % (_dump, first, last), ("""{{Mise à jour bot|Arkanosis}}
+	editOrDebug(_rootPage + '/%i' % page, '%s au %s, %i à %i' % (_summary, _dump, first, last), ("""{{Mise à jour bot|Arkanosis}}
 
-== Articles sans portail (%i à %i) ==\n\n{{../intro}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (first, last, _dump)) + text + """
+== %s (%i à %i) ==\n\n{{%s}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (_summary, first, last, _introPath, _dump)) + text + """
 
-{{Palette Articles sans portail}}
-""", bot=True)
+{{Palette %s}}
+""" % _summary, bot=True)
 	time.sleep(_secondsBetweenEdits)
 
 def clearPage(page):
 	if page < _firstPage:
 		return
-	bot.edit(_rootPage + '/%i' % page, 'Articles sans portail au %s, page vide' % _dump, """{{Mise à jour bot|Arkanosis}}
+	print 'Vidage de la page %i sur %i (%i restantes) @%ippm' % (page, _lastPage, _lastPage - page, 60 / _secondsBetweenEdits)
+	editOrDebug(_rootPage + '/%i' % page, '%s au %s, page vide' % (_summary, _dump), """{{Mise à jour bot|Arkanosis}}
 
-{{../intro}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % _dump, bot=True)
+{{%s}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (_introPath, _dump), bot=True)
 	time.sleep(_secondsBetweenEdits)
 
 if __name__ == '__main__':
@@ -69,21 +156,18 @@ if __name__ == '__main__':
 	formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', '%H:%M:%S')
 	logger.setLevel(logging.INFO)
 
-	bot = arkbot.Arkbot(arkbot._botName, arkbot._wiki, logger)
+	_bot = arkbot.Arkbot(arkbot._botName, arkbot._wiki, logger)
 	try:
-		bot.login(getpass.getpass('Bot password ? '))
+		if not _debug:
+			_bot.login(getpass.getpass('Bot password ? '))
 
                 with open(sys.argv[1]) as articles:
 			page = ''
-			index = """{{Mise à jour bot|Arkanosis}}
-
-== Articles sans portail ==\n\n{{/intro}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
-""" % _dump
 			model = """{{Méta palette de navigation
- | modèle    = Palette Articles sans portail
+ | modèle    = Palette %s
  | étatboîte = autocollapse
- | titre     = [[%s|Articles sans portail]]
- | liste1    = """ % _rootPage
+ | titre     = [[%s|%s]]
+ | liste1    = """ % (_subject, _rootPage.replace('Projet:Portails/', 'Projet:'), _summary)
 			section = ''
 			subSection = ''
 			number = 0
@@ -92,40 +176,47 @@ if __name__ == '__main__':
 			startSubSection = 1
 			pageNumber = 1
 			for article in articles:
+				name = _transform(article.rstrip())
+				if not name:
+					continue
+				subSection += '<li>%s</li>\n' % name
 				number += 1
-				subSection += '<li>[[%s]]</li>\n' % article.rstrip()
 				if not number % _nbArticlesPerSubSection:
 					section += '\n<!-- %i à %i -->\n\n%s' % (startSubSection, number, subSection)
 					subSection = ''
 					startSubSection = number + 1
 				if not number % _nbArticlesPerSection:
-					page += '\n\n=== %i à %i ===\n\n<ol start="%i" style="-moz-column-count:3; column-count:3;">\n%s</ol>' % (startSection, number, startSection, section)
+					page += '\n\n=== %i à %i ===\n\n<ol start="%i"%s>\n%s</ol>' % (startSection, number, startSection, _columns, section)
 					section = ''
 					startSection = number + 1
 				if not number % _nbArticlesPerPage:
 					publishPage(page, startPage, number, pageNumber)
-					index += '\n# [[%s/%i|%i à %i]]' % (_rootPage, pageNumber, startPage, number)
-					model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage, pageNumber, startPage, number)
+					model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage.replace('Projet:Portails/', 'Projet:'), pageNumber, startPage, number)
 					pageNumber += 1
 					page = ''
 					startPage = number + 1
-			if number >= startPage:
+					if pageNumber > _lastPage:
+						break
+			if number >= startPage and pageNumber <= _lastPage:
 				if number >= startSection:
-					page += '\n\n=== %i à %i ===\n\n<ol start="%i" style="-moz-column-count:3; column-count:3;">\n%s</ol>' % (startSection, number, startSection, section)
+					if number % _nbArticlesPerSubSection:
+						section += '\n<!-- %i à %i -->\n\n%s' % (startSubSection, number, subSection)
+					page += '\n\n=== %i à %i ===\n\n<ol start="%i"%s>\n%s</ol>' % (startSection, number, startSection, _columns, section)
 				publishPage(page, startPage, number, pageNumber)
-				index += '\n# [[%s/%i|%i à %i]]' % (_rootPage, pageNumber, startPage, number)
-				model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage, pageNumber, startPage, number)
+				model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage.replace('Projet:Portails/', 'Projet:'), pageNumber, startPage, number)
 				pageNumber += 1
 		model = model[:-6] + """
 }}"""
 
-		for pageNumber in xrange(max(_firstPage, pageNumber), _lastPage + 1):
-			clearPage(pageNumber)
+		if _lastPage != sys.maxint:
+			for pageNumber in xrange(max(_firstPage, pageNumber), _lastPage + 1):
+				clearPage(pageNumber)
 
-		#bot.edit(_rootPage, 'Articles sans portail au %s' % _dump, index, bot=True)
-		bot.edit('Modèle:Palette Articles sans portail', 'Articles sans portail au %s' % _dump, model, bot=True)
+		if _mode in [1, 4]:
+			editOrDebug('Modèle:Palette %s' % _subject, '%s au %s' % (_summary, _dump), model, bot=True)
 
-		bot.logout()
+		if not _debug:
+			_bot.logout()
 
 	except (arkbot.ArkbotException), e:
 		print e
