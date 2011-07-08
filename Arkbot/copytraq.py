@@ -28,11 +28,7 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	if '-botflag' in sys.argv:
-		botflag = True
-		sys.argv.remove('-botflag')
-	else:
-		botflag = False
+	botflag = utils.getOption('botflag')
 
 	timestamp = '2000-01-01T00:00:00Z'
 	if len(sys.argv) == 3:

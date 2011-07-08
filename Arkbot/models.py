@@ -16,6 +16,7 @@ import logging
 import sys
 
 import arkbot
+import utils
 
 if __name__ == '__main__':
 	print 'Models 0.1'
@@ -23,18 +24,10 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	if '-publish' in sys.argv:
-		publish = True
-		sys.argv.remove('-publish')
-	else:
+	publish = utils.getOption('publish')
+	test = utils.getOption('test')
+	if test:
 		publish = False
-
-	if '-test' in sys.argv:
-		test = True
-		publish = False
-		sys.argv.remove('-test')
-	else:
-		test = False
 
 	if len(sys.argv) != 2:
 		print 'Usage: models.py [-publish|-test] <category>'

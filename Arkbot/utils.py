@@ -29,3 +29,24 @@ def getch():
 
 def fancyTime(timestamp):
 	return timestamp[:-4].replace('T', ' ')
+
+def getOption(name, valueIfPresent=True, valueIfAbsent=False):
+    name = '-' + name
+    if name in sys.argv:
+        sys.argv.remove(name)
+        return valueIfPresent
+    return valueIfAbsent
+
+def getValue(name, default=None):
+    name = '-' + name
+    if name in sys.argv:
+        index = sys.argv.index(name)
+        if index + 1 == len(sys.argv):
+            assert default is not None
+            sys.argv.remove(name)
+            return default
+        value = sys.argv[index + 1]
+        sys.argv = sys.argv[:index + 1] + sys.argv[index + 2:]
+        sys.argv.remove(name)
+        return value
+    return default

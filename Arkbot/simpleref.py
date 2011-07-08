@@ -17,6 +17,7 @@ import re
 import sys
 
 import arkbot
+import utils
 
 _ref = re.compile(r'<ref((\s+group="(?P<group>[^"]+)")|(\s+name="(?P<name>[^"]+)")?)*>(?P<ref>.+?)</ref>', re.UNICODE)
 
@@ -26,11 +27,7 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	if '-publish' in sys.argv:
-		publish = True
-		sys.argv.remove('-publish')
-	else:
-		publish = False
+	publish = utils.getOption('publish')
 
 	if len(sys.argv) != 2:
 		print 'Usage: simpleref.py [-publish] <article>'

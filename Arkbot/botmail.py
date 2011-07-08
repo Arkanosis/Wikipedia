@@ -17,6 +17,7 @@ import re
 import sys
 
 import arkbot
+import utils
 
 _bot = re.compile(r'u\'\|(?P<bot>[^}]+)')
 _trainer = re.compile(r'\[\[Utilisateur:(?P<trainer>[^\|/\]]+)')
@@ -27,11 +28,7 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	if '-publish' in sys.argv:
-		publish = True
-		sys.argv.remove('-publish')
-	else:
-		publish = False
+	publish = utils.getOption('publish')
 
 	if len(sys.argv) != 1:
 		print 'Usage: botmail.py [-publish]'

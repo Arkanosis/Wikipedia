@@ -16,6 +16,7 @@ import logging
 import sys
 
 import arkbot
+import utils
 
 if __name__ == '__main__':
 	print 'CatDump 0.1'
@@ -23,15 +24,8 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	recursive = False
-	if '-R' in sys.argv:
-		recursive = True
-		sys.argv.remove('-R')
-
-        categories = False
-	if '-C' in sys.argv:
-		categories = True
-		sys.argv.remove('-C')
+	recursive = utils.getOption('R')
+	categories = utils.getOption('C')
 
 	if len(sys.argv) != 3:
 		print 'Usage: catdump.py [-R] [-C] <category> <outputFile>'
