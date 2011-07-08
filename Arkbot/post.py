@@ -17,8 +17,20 @@ import sys
 import time
 
 import arkbot
+import utils
 
-_debug = False
+_dump = utils.getValue('dump')
+_mode = int(utils.getValue('mode'))
+_debug = utils.getOption('debug')
+
+if _mode == 1:
+	_page = 'Projet:Pages en impasse/liste des pages en impasse'
+	_summary = 'Pages en impasse au %s' % _dump
+	_pages = 'en impasse'
+else:
+	_page = 'Projet:Pages vides/liste des pages vides'
+	_summary = 'Pages vides au %s' % _dump
+	_pages = 'vides'
 
 if __name__ == '__main__':
 	print 'Post 0.1'
@@ -26,8 +38,8 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	if len(sys.argv) != 3:
-		print 'Usage: post.py <fichier> <page>'
+	if len(sys.argv) != 2:
+		print 'Usage: post.py <fichier>'
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -46,26 +58,19 @@ if __name__ == '__main__':
 		#	bot.edit(sys.argv[2], '-contribs47', '.', bot=True)
 
 
-
-		# for page in ['', '/xaa', '/xab', '/xac', '/xad', '/xae', '/xaf', '/xag', '/xah', '/xai', '/xaj', '/xak', '/xal', '/xam', '/xan', '/xao', '/xap', '/xaq', '/xar', '/xas', '/xat', '/xau']:
-		# 	bot.edit('Utilisateur:Arkbot/Articles sans portail%s' % page, 'Transformation en redirection vers [[Projet:Portails/Articles sans portail]]', '#REDIRECT[[Projet:Portails/Articles sans portail]]', bot=True)
-		# 	time.sleep(6)
-
-
-		_dump = '18 mars 2011'
 		text = """{{Mise à jour bot|Arkanosis}}
 
-== Pages en impasse ==\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
+== Pages %s ==\n\nDernière mise à jour le ~~~~~ avec le dump du %s.
 
-""" % _dump
+""" % (_pages, _dump)
 		with open(sys.argv[1]) as inputFile:
 			for line in inputFile:
-				text += '# [[%s]]\n' % line.rstrip()
+				text += '# [[:%s]]\n' % line.rstrip()
 
 		if _debug:
-			print('Projet:Pages en impasse/liste des pages en impasse', 'Pages en impasse au %s' % _dump, text, True)
+			print(_page, _summary, text, True)
 		else:
-			bot.edit('Projet:Pages en impasse/liste des pages en impasse', 'Pages en impasse au %s' % _dump, text, bot=True)
+			bot.edit(_page, _summary, text, bot=True)
 			bot.logout()
 
 	except (arkbot.ArkbotException), e:

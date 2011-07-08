@@ -26,23 +26,22 @@ import sys
 import time
 
 import arkbot
+import utils
 
-_dump = '18 mars 2011'
+_dump = utils.getValue('dump')
+_mode = int(utils.getValue('mode'))
+_debug = utils.getOption('debug')
 
-_secondsBetweenEdits = 5
+_secondsBetweenEdits = int(utils.getValue('delay', '5'))
+
+_firstPage = int(utils.getValue('first', 1))
+_lastPage = sys.maxint
 
 _nbColumns = 3
 _nbArticlesPerSection = 100
 _nbSectionsPerPage = 5
 
-_firstPage = 1
-_lastPage = sys.maxint
-
 _subPage = False
-
-_mode = 1
-
-_debug = True
 
 if _debug:
 	_secondsBetweenEdits = .1
@@ -59,7 +58,7 @@ def contrib(line):
 _transform = link
 
 if _mode == 1:
-	_lastPage = 69
+	_lastPage = 60
 	_root = 'Projet:Articles sans portail'
 	_subject = 'Articles sans portail'
 elif _mode == 2:
@@ -67,7 +66,7 @@ elif _mode == 2:
 	_root = 'Projet:Articles sans portail/Album musical'
 	_subject = 'Articles sans portail/Album musical'
 elif _mode == 3:
-	_lastPage = 2
+	_lastPage = 1
 	_root = 'Projet:Articles sans portail/Acteur'
 	_subject = 'Articles sans portail/Acteur'
 elif _mode == 4:
@@ -148,7 +147,7 @@ if __name__ == '__main__':
 	print
 
 	if len(sys.argv) != 2:
-		print 'Usage: noportal.py <fichier>'
+		print 'Usage: noportal.py -dump <dumpDate> -mode <mode> [-debug] <fichier>'
 		sys.exit(1)
 
 	date = datetime.datetime.now()
