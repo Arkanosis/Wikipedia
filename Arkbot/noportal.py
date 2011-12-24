@@ -47,6 +47,8 @@ if _debug:
 	_secondsBetweenEdits = .1
 
 def link(line):
+	if line[0] == '/':
+		return '[[:%s]]' % line
 	return '[[%s]]' % line
 
 def contrib(line):
@@ -58,7 +60,7 @@ def contrib(line):
 _transform = link
 
 if _mode == 1:
-	_lastPage = 60
+	_lastPage = 30
 	_root = 'Projet:Articles sans portail'
 	_subject = 'Articles sans portail'
 elif _mode == 2:
