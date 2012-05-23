@@ -231,6 +231,21 @@ class Arkbot(object):
 			kwargs['ucstart'] = response['query-continue'].usercontribs.ucstart
 			time.sleep(60. / _maxRequestsPerMinute)
 
+	def __logevents(self, lelimit=10, lang=_lang, *args, **kwargs):
+		while True:
+			query = 'action=query&list=logevents&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&lelimit=%s' % min(int(lelimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_'), lang=lang), query)
+			for logevent in response.query.logevents:
+				yield logevent
+			lelimit = int(lelimit) - _maxApiRequest
+			if 'query-continue' not in response or lelimit <= 0:
+				break
+			kwargs['lestart'] = response['query-continue'].logevents.lestart
+			time.sleep(60. / _maxRequestsPerMinute)
+
 	def __revisions(self, rvlimit=1, *args, **kwargs):
 		while True:
 			query = 'action=query&prop=revisions&'
@@ -561,6 +576,9 @@ class Arkbot(object):
 	def contributions(self, *args, **kwargs):
 		return self.__contributions(*args, **kwargs)
 
+	def logevents(self, *args, **kwargs):
+		return self.__logevents(*args, **kwargs)
+
 	def revisions(self, *args, **kwargs):
 		return self.__revisions(*args, **kwargs)
 
@@ -616,7 +634,7 @@ if __name__ == '__main__':
 	try:
 		if login:
 			logger.info('Logging in with user name %s' % _botName)
-			bot.login(getpass.getpass('Bot password ? '))
+			bot.login(getpass.getpass('Bot password? '))
 
 		# TASKS
 		#print bot.info('Compression de données', 'Pondération de contextes')
