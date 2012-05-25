@@ -45,7 +45,7 @@ if __name__ == '__main__':
 					'old': '',
 					'new': 'sysop'
 				})
-			oldRights, newRights = set(rightchange.rights.old.split(',')), set(rightchange.rights.new.split(','))
+			oldRights, newRights = set(rightchange.rights.old.replace(' ', '').split(',')), set(rightchange.rights.new.replace(' ', '').split(','))
 			addedRights, removedRights = newRights - oldRights, oldRights - newRights
 			if 'sysop' in addedRights:
 				additions.append((rightchange.user.encode('utf-8'), rightchange.title.encode('utf-8'), rightchange.timestamp.encode('utf-8')))
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 					'old': '',
 					'new': 'sysop'
 				})
-			oldRights, newRights = set(rightchange.rights.old.split(',')), set(rightchange.rights.new.split(','))
+			oldRights, newRights = set(rightchange.rights.old.replace(' ', '').split(',')), set(rightchange.rights.new.replace(' ', '').split(','))
 			addedRights, removedRights = newRights - oldRights, oldRights - newRights
 			if rightchange.title is None:
 				print >> sys.stderr, 'Invalid: ', rightchange
