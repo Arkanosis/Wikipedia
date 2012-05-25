@@ -1,13 +1,12 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Arkbot (prototype)
-# (C) 2010 Arkanosis
+# (C) 2010-2011 Arkanosis
 # arkanosis@gmail.com
 
 # Ce bot est un *prototype* pour Arkbot et n'est pas destiné à un usage en production
 # http://github.com/Arkanosis/Wikipedia/Arkbot (prototype)
-# http://trac-git.assembla.com/arkbot/ (version architecturée)
 
 # Ce bot est mis à disposition sous licence MIT
 # http://www.opensource.org/licenses/mit-license.php
@@ -189,7 +188,7 @@ class Arkbot(object):
 		return filter(lambda link: 0 < link.find(':') < 4 or link.startswith('simple:') or link.startswith('tokipona:'), links)
 
 	def __recent(self, rclimit=10, *args, **kwargs):
-		while rclimit > 0:
+		while True:
 			query = 'action=query&list=recentchanges&'
 			for arg in kwargs.items():
 				query += '%s=%s&' % arg
@@ -198,11 +197,13 @@ class Arkbot(object):
 			for change in response.query.recentchanges:
 				yield change
 			rclimit = int(rclimit) - _maxApiRequest
+			if 'query-continue' not in response or rclimit <= 0:
+				break
 			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
 			time.sleep(60. / _maxRequestsPerMinute)
 
 	def __random(self, rnlimit=1, *args, **kwargs):
-		while rnlimit > 0:
+		while True:
 			query = 'action=query&list=random&'
 			for arg in kwargs.items():
 				query += '%s=%s&' % arg
@@ -211,12 +212,74 @@ class Arkbot(object):
 			for page in response.query.random:
 				yield page
 			rnlimit = int(rnlimit) - _maxRandomApiRequest
+			if rnlimit <= 0:
+				break
+			time.sleep(60. / _maxRequestsPerMinute)
+
+	def __contributions(self, uclimit=10, *args, **kwargs):
+		while True:
+			query = 'action=query&list=usercontribs&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&uclimit=%s' % min(int(uclimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			for contribution in response.query.usercontribs:
+				yield contribution
+			uclimit = int(uclimit) - _maxApiRequest
+			if 'query-continue' not in response or uclimit <= 0:
+				break
+			kwargs['ucstart'] = response['query-continue'].usercontribs.ucstart
+			time.sleep(60. / _maxRequestsPerMinute)
+
+	def __logevents(self, lelimit=10, lang=_lang, *args, **kwargs):
+		while True:
+			query = 'action=query&list=logevents&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&lelimit=%s' % min(int(lelimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_'), lang=lang), query)
+			for logevent in response.query.logevents:
+				yield logevent
+			lelimit = int(lelimit) - _maxApiRequest
+			if 'query-continue' not in response or lelimit <= 0:
+				break
+			kwargs['lestart'] = response['query-continue'].logevents.lestart
+			time.sleep(60. / _maxRequestsPerMinute)
+
+	def __revisions(self, rvlimit=1, *args, **kwargs):
+		while True:
+			query = 'action=query&prop=revisions&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&rvlimit=%s' % min(int(rvlimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			for revision in response.query.pages.values():
+				yield revision
+			rvlimit = int(rvlimit) - _maxApiRequest
+			if 'query-continue' not in response or rvlimit <= 0:
+				break
+			kwargs['rvstart'] = response['query-continue'].revisions.rvstart
+			time.sleep(60. / _maxRequestsPerMinute)
+
+	def __users(self, aulimit=10, *args, **kwargs):
+		while True:
+			query = 'action=query&list=allusers&'
+			for arg in kwargs.items():
+				query += '%s=%s&' % arg
+			query += 'format=json&aulimit=%s' % min(int(aulimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			for user in response.query.allusers:
+				yield user
+			aulimit = int(aulimit) - _maxApiRequest
+			if 'query-continue' not in response or aulimit <= 0:
+				break
+			kwargs['aufrom'] = response['query-continue'].allusers.aufrom.encode('utf-8')
 			time.sleep(60. / _maxRequestsPerMinute)
 
 	def __articles(self, cmlimit=10, cmnamespace=0, recurse=False, *args, **kwargs):
 		if kwargs['cmtitle'].startswith('Wikipédia:'):
 			return
-		while cmlimit > 0:
+		while True:
 			query = 'action=query&list=categorymembers&cmtitle=%s&cmnamespace=%i&' % ('Category:' + urllib.quote(kwargs['cmtitle']), cmnamespace)
 			for arg in kwargs.items():
 				if arg[0] != 'cmtitle':
@@ -227,7 +290,7 @@ class Arkbot(object):
 			for article in articles:
 				yield article
 			cmlimit = int(cmlimit) - len(articles) # Due to $wgMiserMode, using this may result in fewer than "limit" results
-			if 'query-continue' not in response:
+			if 'query-continue' not in response or cmlimit <= 0:
 				break
 			kwargs['cmstartsortkey'] = response['query-continue'].categorymembers.cmcontinue
 			time.sleep(60. / _maxRequestsPerMinute)
@@ -239,8 +302,38 @@ class Arkbot(object):
 					cmlimit -= 1
 					yield article
 
+	def __categories(self, cmlimit=10, *args, **kwargs):
+		while True:
+			query = 'action=query&list=categorymembers&cmtitle=%s&cmnamespace=14&' % ('Category:' + urllib.quote(kwargs['cmtitle']))
+			for arg in kwargs.items():
+				if arg[0] != 'cmtitle':
+					query += '%s=%s&' % arg
+			query += 'format=json&cmlimit=%s' % min(int(cmlimit), _maxApiRequest)
+			response = self.__handleApiResponse(self.__request(_apiUrl + query.replace(' ', '_')), query)
+			articles = response.query.categorymembers
+			for article in articles:
+				yield article
+				for article in self.__categories(cmtitle=article.title[10:].encode('utf8'), cmlimit=cmlimit):
+					cmlimit -= 1
+					yield article
+			cmlimit = int(cmlimit) - len(articles) # Due to $wgMiserMode, using this may result in fewer than "limit" results
+			if 'query-continue' not in response or cmlimit <= 0:
+				break
+			kwargs['cmstartsortkey'] = response['query-continue'].categorymembers.cmcontinue
+			time.sleep(60. / _maxRequestsPerMinute)
+
 	def __suffixes(self, cmlimit=10, *args, **kwargs):
 		return []
+
+	def __move(self, ffrom, to, reason, movetalk=True, *args, **kwargs):
+		self.__logger.info('Moving page "%s" to "%s" with summary "%s"' % (ffrom, to, reason))
+		if self.__shouldStop():
+			raise ApiException('The bot has been asked to stop editing the wiki, or is not logged in anymore')
+		pageInfo = self.__get(titles=ffrom, prop='info', intoken='edit').pages.values()[0]
+		kwargs['from'] = ffrom
+		apiResponse = self.__post(action='move', to=to, reason=reason, movetalk=movetalk, token=pageInfo.edittoken, *args, **kwargs)
+		if not apiResponse.move:
+			raise ApiException('Unable to move page "%s" to "%s" with summary "%s"' % (ffrom, to, reason))
 
 	def __diff(self, page, oldid, newid, lang=_lang):
 		query = 'title=%s&diff=%s&oldid=%s' % (page.replace(' ', '_'), newid, oldid)
@@ -480,8 +573,26 @@ class Arkbot(object):
 	def random(self, *args, **kwargs):
 		return self.__random(*args, **kwargs)
 
+	def contributions(self, *args, **kwargs):
+		return self.__contributions(*args, **kwargs)
+
+	def logevents(self, *args, **kwargs):
+		return self.__logevents(*args, **kwargs)
+
+	def revisions(self, *args, **kwargs):
+		return self.__revisions(*args, **kwargs)
+
+	def users(self, *args, **kwargs):
+		return self.__users(*args, **kwargs)
+
 	def articles(self, *args, **kwargs):
 		return self.__articles(*args, **kwargs)
+
+	def categories(self, *args, **kwargs):
+		return self.__categories(*args, **kwargs)
+
+	def move(self, ffrom, to, summary, *args, **kwargs):
+		self.__move(ffrom=ffrom, to=to, reason=summary, *args, **kwargs)
 
 if __name__ == '__main__':
 	print 'Arkbot %s (prototype)' % _version
@@ -523,7 +634,7 @@ if __name__ == '__main__':
 	try:
 		if login:
 			logger.info('Logging in with user name %s' % _botName)
-			bot.login(getpass.getpass('Bot password ? '))
+			bot.login(getpass.getpass('Bot password? '))
 
 		# TASKS
 		#print bot.info('Compression de données', 'Pondération de contextes')

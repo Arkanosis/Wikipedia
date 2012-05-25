@@ -1,7 +1,7 @@
 #! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-# Models v0.1
+# UserContribs v0.1
 # (C) 2010 Arkanosis
 # arkanosis@gmail.com
 
@@ -16,21 +16,15 @@ import logging
 import sys
 
 import arkbot
-import utils
 
 if __name__ == '__main__':
-	print 'Models 0.1'
+	print 'UserContribs 0.1'
 	print '(C) 2010 Arkanosis'
 	print 'arkanosis@gmail.com'
 	print
 
-	publish = utils.getOption('publish')
-	test = utils.getOption('test')
-	if test:
-		publish = False
-
-	if len(sys.argv) != 2:
-		print 'Usage: models.py [-publish|-test] <category>'
+	if len(sys.argv) != 3:
+		print 'Usage: usercontribs.py <userName> <nbContribs>'
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -40,18 +34,11 @@ if __name__ == '__main__':
 
 	bot = arkbot.Arkbot(arkbot._botName, arkbot._wiki, logger)
 	try:
-		if publish or test:
-			bot.login(getpass.getpass('Bot password ? '))
+		bot.login(getpass.getpass('Bot password ? '))
+		for contrib in bot.contributions(ucuser=sys.argv[1], ucnamespace=0, uclimit=sys.argv[2], ucprop='title'):
+			print contrib.title.encode('utf-8')
 
-		for article in bot.articles(cmtitle=sys.argv[1], cmlimit=50000, cmprop='title'):
-			res += '%s\n' % article
-
-		if publish:
-			bot.logout()
-                elif test:
-			bot.logout()
-		else:
-			print res
+		bot.logout()
 
 	except (arkbot.ArkbotException), e:
 		print e

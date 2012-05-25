@@ -16,6 +16,7 @@ import logging
 import sys
 
 import arkbot
+import utils
 
 if __name__ == '__main__':
 	print 'CatDump 0.1'
@@ -23,13 +24,11 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	recursive = False
-	if '-R' in sys.argv:
-		recursive = True
-		sys.argv.remove('-R')
+	recursive = utils.getOption('R')
+	categories = utils.getOption('C')
 
 	if len(sys.argv) != 3:
-		print 'Usage: catdump.py [-R] <category> <outputFile>'
+		print 'Usage: catdump.py [-R] [-C] <category> <outputFile>'
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -42,8 +41,12 @@ if __name__ == '__main__':
 		#bot.login(getpass.getpass('Bot password ? '))
 
 		with open(sys.argv[2], 'w') as outputFile:
-			for article in bot.articles(cmtitle=sys.argv[1], recurse=recursive, cmlimit=5000):
-				outputFile.write(article.title.encode('utf8') + '\n')
+			if categories:
+				for category in bot.categories(cmtitle=sys.argv[1], cmlimit=5000):
+					outputFile.write(category.title.encode('utf8') + '\n')
+			else:
+				for article in bot.articles(cmtitle=sys.argv[1], recurse=recursive, cmlimit=5000):
+					outputFile.write(article.title.encode('utf8') + '\n')
 
 		#bot.logout()
 

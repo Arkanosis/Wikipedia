@@ -1,7 +1,7 @@
 #! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-# Models v0.1
+# Users v0.1
 # (C) 2010 Arkanosis
 # arkanosis@gmail.com
 
@@ -16,21 +16,15 @@ import logging
 import sys
 
 import arkbot
-import utils
 
 if __name__ == '__main__':
-	print 'Models 0.1'
-	print '(C) 2010 Arkanosis'
+	print 'Users 0.1'
+	print '(C) 2011 Arkanosis'
 	print 'arkanosis@gmail.com'
 	print
 
-	publish = utils.getOption('publish')
-	test = utils.getOption('test')
-	if test:
-		publish = False
-
 	if len(sys.argv) != 2:
-		print 'Usage: models.py [-publish|-test] <category>'
+		print 'Usage: users.py <nbUsers>'
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -40,18 +34,16 @@ if __name__ == '__main__':
 
 	bot = arkbot.Arkbot(arkbot._botName, arkbot._wiki, logger)
 	try:
-		if publish or test:
-			bot.login(getpass.getpass('Bot password ? '))
+		bot.login(getpass.getpass('Bot password ? '))
+		for user in bot.users(aulimit=sys.argv[1], auprop='blockinfo|groups|editcount'):
+			if user.blockedby:
+				groups = '—'
+				if user.groups:
+					groups = user.groups
+				print '%s ||@|| %s ||@|| %s ||@|| %s ||@|| %d' % (user.blockedby.encode('utf-8'), user.name.encode('utf-8'), user.blockreason.encode('utf-8'), groups, user.editcount)
+			#print u' || '.join(tuple((_str(property) for property in (user.name, user.groups, user.editcount, user.blockedby))))
 
-		for article in bot.articles(cmtitle=sys.argv[1], cmlimit=50000, cmprop='title'):
-			res += '%s\n' % article
-
-		if publish:
-			bot.logout()
-                elif test:
-			bot.logout()
-		else:
-			print res
+		bot.logout()
 
 	except (arkbot.ArkbotException), e:
 		print e
