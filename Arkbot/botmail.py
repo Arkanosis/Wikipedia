@@ -3,7 +3,7 @@
 
 # BotMail v0.1
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -25,7 +25,7 @@ _trainer = re.compile(r'\[\[Utilisateur:(?P<trainer>[^\|/\]]+)')
 if __name__ == '__main__':
 	print 'BotMail 0.1'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	publish = utils.getOption('publish')

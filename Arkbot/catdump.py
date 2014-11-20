@@ -3,7 +3,7 @@
 
 # CatDump v0.1
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -21,7 +21,7 @@ import utils
 if __name__ == '__main__':
 	print 'CatDump 0.1'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	recursive = utils.getOption('R')

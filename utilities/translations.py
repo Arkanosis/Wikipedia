@@ -3,7 +3,7 @@
 
 # Translations v0.1
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # Ce script est mis à disposition sous licence MIT
 # http://www.opensource.org/licenses/mit-license.php
@@ -22,7 +22,7 @@ _interWiki = reg(r'(\[\[(?P<lang>[a-z][a-z].?(?:x?-[^\]]+)?|simple|tokipona):(?P
 if __name__ == '__main__':
 	print 'Translations 0.1'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	if len(sys.argv) != 4:

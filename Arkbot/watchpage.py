@@ -3,7 +3,7 @@
 
 # WatchPage v0.1
 # (C) 2011 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -24,7 +24,7 @@ import utils
 if __name__ == '__main__':
 	print 'WatchPage 0.1'
 	print '(C) 2011 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	if len(sys.argv) != 3:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 import re
 import sys

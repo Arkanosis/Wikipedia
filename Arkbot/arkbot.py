@@ -3,7 +3,7 @@
 
 # Arkbot (prototype)
 # (C) 2010-2011 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # Ce bot est un *prototype* pour Arkbot et n'est pas destiné à un usage en production
 # http://github.com/Arkanosis/Wikipedia/Arkbot (prototype)
@@ -597,7 +597,7 @@ class Arkbot(object):
 if __name__ == '__main__':
 	print 'Arkbot %s (prototype)' % _version
 	print '(C) 2009-2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	login = False

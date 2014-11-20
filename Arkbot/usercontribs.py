@@ -3,7 +3,7 @@
 
 # UserContribs v0.1
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -20,7 +20,7 @@ import arkbot
 if __name__ == '__main__':
 	print 'UserContribs 0.1'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	if len(sys.argv) != 3:

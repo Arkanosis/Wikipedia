@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 # (C) 2012 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 import datetime
 import locale

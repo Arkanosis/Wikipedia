@@ -2,7 +2,7 @@
 
 # Wikipedia
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
