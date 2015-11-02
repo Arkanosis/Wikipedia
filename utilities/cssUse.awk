@@ -12,14 +12,14 @@ END {
 
 /<title>.*?</ {
   if (class) {
-    print title
+    print title " " str
   }
 
   class = 0
   title = substr($0, 12, length($0) - 19)
 }
 
-/class=&quot;([^&]* )?(audio|video)(&quot;| )/ {
-  print $0
+/class=(&quot;)?([^&]*[^a-zA-Z0-9])?interprojet[^a-zA-Z0-9]/ {
   class = 1
+  str = $0
 }
