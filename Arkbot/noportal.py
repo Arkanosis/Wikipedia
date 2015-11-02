@@ -46,6 +46,9 @@ _subPage = False
 if _debug:
 	_secondsBetweenEdits = .1
 
+def identity(line):
+	return line
+
 def link(line):
 	if line[0] == '/':
 		return '[[:%s]]' % line
@@ -57,10 +60,15 @@ def contrib(line):
 		return False
 	return '%s — {{a-court|%s}} ({{u\'|%s}})' % (parts[0], parts[2], parts[3])
 
+def edits(line):
+	parts = line.split(' || ')
+	return '{{formatnum:%s}} — {{a-court|%s}}' % (parts[0], parts[1])
+
 _transform = link
 
 if _mode == 1:
-	_lastPage = 30
+	_firstPage = 1
+	_lastPage = 1
 	_root = 'Projet:Articles sans portail'
 	_subject = 'Articles sans portail'
 elif _mode == 2:
@@ -72,6 +80,10 @@ elif _mode == 3:
 	_root = 'Projet:Articles sans portail/Acteur'
 	_subject = 'Articles sans portail/Acteur'
 elif _mode == 4:
+	_lastPage = 1
+	_root = 'Projet:Articles sans portail/Homonymies'
+	_subject = 'Articles sans portail/Homonymies'
+elif _mode == 5:
 	_nbColumns = 1
 	_nbSectionsPerPage = 6
 	_nbArticlesPerSection = 50
@@ -79,6 +91,47 @@ elif _mode == 4:
 	_root = 'Projet:Pages les moins modifiées'
 	_subject = 'Pages les moins modifiées'
 	_transform = contrib
+elif _mode == 6:
+	_nbColumns = 1
+	_nbSectionsPerPage = 6
+	_nbArticlesPerSection = 50
+	_lastPage = 1
+	_root = 'Utilisateur:Arkbot/Pages les plus modifiées'
+	_subject = 'Pages les plus modifiées'
+	_transform = edits
+elif _mode == 7:
+	_lastPage = 3
+	_root = 'Projet:Articles sans infobox'
+	_subject = 'Articles sans infobox'
+elif _mode == 8:
+	_lastPage = 1
+	_root = 'Projet:Articles sans infobox/Album musical'
+	_subject = 'Articles sans infobox/Album musical'
+elif _mode == 9:
+	_lastPage = 1
+	_root = 'Projet:Articles sans infobox/Acteur'
+	_subject = 'Articles sans infobox/Acteur'
+elif _mode == 10:
+	_lastPage = 10
+	_root = 'Projet:Articles non liés depuis Wikidata'
+	_subject = 'Articles non liés depuis Wikidata'
+	_transform = identity
+elif _mode == 11:
+	_lastPage = 1
+	_root = 'Utilisateur:Arkbot/Titres contenant une parenthèse non précédée d\'une espace'
+	_subject = 'Titres contenant une parenthèse non précédée d\'une espace'
+elif _mode == 12:
+	_lastPage = 45
+	_root = 'Projet:Articles dont le nom est à vérifier'
+	_subject = 'Articles dont le nom est à vérifier'
+elif _mode == 13:
+	_lastPage = 1
+	_root = 'Utilisateur:Arkbot/Homonymies à renommer'
+	_subject = 'Homonymies à renommer'
+elif _mode == 14:
+	_lastPage = 4
+	_root = 'Utilisateur:Arkbot/Caractères spéciaux à vérifier'
+	_subject = 'Caractères spéciaux à vérifier'
 else:
 	assert False, 'Invalid mode'
 
@@ -165,10 +218,10 @@ if __name__ == '__main__':
                 with open(sys.argv[1]) as articles:
 			page = ''
 			model = """{{Méta palette de navigation
- | modèle    = Palette %s
- | étatboîte = autocollapse
- | titre     = [[%s|%s]]
- | liste1    = """ % (_subject, _rootPage.replace('Projet:Portails/', 'Projet:'), _summary)
+ | modèle     = Palette %s
+ | titre      = [[%s|%s]]
+ | styleliste = text-align:center
+ | liste1     = {{liste horizontale|""" % (_subject, _rootPage, _summary)
 			section = ''
 			subSection = ''
 			number = 0
@@ -192,7 +245,7 @@ if __name__ == '__main__':
 					startSection = number + 1
 				if not number % _nbArticlesPerPage:
 					publishPage(page, startPage, number, pageNumber)
-					model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage.replace('Projet:Portails/', 'Projet:'), pageNumber, startPage, number)
+					model += '\n* [[%s/%i|%i à %i]]' % (_rootPage, pageNumber, startPage, number)
 					pageNumber += 1
 					page = ''
 					startPage = number + 1
@@ -204,16 +257,19 @@ if __name__ == '__main__':
 						section += '\n<!-- %i à %i -->\n\n%s' % (startSubSection, number, subSection)
 					page += '\n\n=== %i à %i ===\n\n<ol start="%i"%s>\n%s</ol>' % (startSection, number, startSection, _columns, section)
 				publishPage(page, startPage, number, pageNumber)
-				model += '[[%s/%i|%i à %i]]{{·}}' % (_rootPage.replace('Projet:Portails/', 'Projet:'), pageNumber, startPage, number)
+				model += '\n* [[%s/%i|%i à %i]]' % (_rootPage, pageNumber, startPage, number)
 				pageNumber += 1
-		model = model[:-6] + """
-}}"""
+		model += """
+  }}
+}}<noinclude>{{Documentation palette}}
+[[Catégorie:Palette de navigation espace non encyclopédique|%s]]
+</noinclude>""" % _subject
 
 		if _lastPage != sys.maxint:
 			for pageNumber in xrange(max(_firstPage, pageNumber), _lastPage + 1):
 				clearPage(pageNumber)
 
-		if _mode in [1, 4]:
+		if _mode in [1, 4, 7, 8, 9, 10, 11, 12, 13]:
 			editOrDebug('Modèle:Palette %s' % _subject, '%s au %s' % (_summary, _dump), model, bot=True)
 
 		if not _debug:
