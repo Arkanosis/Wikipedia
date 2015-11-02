@@ -27,10 +27,17 @@ if _mode == 1:
 	_page = 'Projet:Pages en impasse/liste des pages en impasse'
 	_summary = 'Pages en impasse au %s' % _dump
 	_pages = 'en impasse'
-else:
+elif _mode == 2:
 	_page = 'Projet:Pages vides/liste des pages vides'
 	_summary = 'Pages vides au %s' % _dump
 	_pages = 'vides'
+elif _mode == 3:
+	_page = 'Utilisateur:Arkbot/Pages redirigeant hors de l\'espace de nom principal'
+	_summary = 'Pages redirigeant hors de l\'espace de nom principal au %s' % _dump
+	_pages = 'redirigeant hors de l\'espace de nom principal'
+else:
+	print 'Unknown mode', _mode
+	sys.exit(1)
 
 if __name__ == '__main__':
 	print 'Post 0.1'
