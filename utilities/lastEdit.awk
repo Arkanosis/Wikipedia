@@ -22,7 +22,7 @@ END {
   next
 }
 
-/<redirect \/>/ {
+/<redirect.*?\/>/ {
   title = 0
   next
 }
