@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # VoteScrapper v0.2
-# (C) 2010 Arkanosis
+# (C) 2010-2012 Arkanosis
 # jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
@@ -33,14 +33,15 @@ import re
 import sys
 
 import arkbot
+import utils
 
 _title = re.compile(r'^(?P<level>=+) *(?P<title>[^=]+?) *(?P=level)$')
-_user = r'((\[\[|{{)(:?w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisat(eur|rice)|ser)([ _][Tt]alk)?:(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?(\]\]|}})|{{[Nn]on signé\|(?P<user2>[^}]+)}})'
+_user = r'((\[\[|{{)(:?w)?(:...?:)?([Dd]iscussion[ _])?[uU](tilisat(eur|rice)|ser)([ _][Tt]alk)?:\s*(?P<user>[^\|/]+)(/[^\|]+)?(\|.+)?(\]\]|}})|{{(?:[Nn]on signé|[Uu]\'?)\|\s*(?P<user2>[^}]+)}})'
 _countVote = re.compile(r'FIXME^#[^:].*%s.*$' % _user, re.UNICODE)
 _condorcetOption = re.compile(r'^\*\s*(\'\'\')?(?P<option>\w\w?)\s*[-–—:]\s*(\'\'\')?(?P<description>.+)')
-_condorcetVote = re.compile(r'^(\*|#)(\s*<!--\[vote\])?(?P<vote>\s*\w\w?\s*([=,>/]+\s*\w\w?\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
+_condorcetVote = re.compile(r'^(\*|#)(\s*<!--\[vote\])?(?P<vote>\s*[A-E]\s*([=,>/]+\s*\w\s*)*)(-->)?([^=,>/\w].*)?%s.*$' % _user, re.UNICODE)
 _nonCondorcetVote = re.compile(r'^\*[^:].*%s.*$' % _user, re.UNICODE)
-_deletedText = re.compile(r'<(?P<tag>del|s|ref)>.*</(?P=tag)>', re.UNICODE)
+_deletedText = re.compile(r'<(?P<tag>del|s|strike|ref)>.*</(?P=tag)>', re.UNICODE)
 
 _none = 'Z'
 
@@ -63,13 +64,16 @@ def extractVotes(page):
 	line = 0
 
 	options = {}
-	options['1'] = '30 septembre 2010 - soit la terminer immédiatement'
-	options['2'] = '30 septembre 2010 - soit pour un total d\'une semaine'
-	options['3'] = '7 octobre 2010 - soit pour un total de deux semaines'
-	options['4'] = '14 octobre 2010 - soit pour un total de trois semaines'
-	options['5'] = '23 octobre 2010 - soit pour un total d\'un mois'
-	options['6'] = '23 novembre 2010 - soit pour un total de deux mois'
-	options['7'] = 'jusqu\'à ce que le 1 050 000e article soit atteint - mais ne pourra pas dépasser le 7 novembre'
+	options['A'] = 'Mettre par défaut des crochets autour des appels de notes'
+	options['B'] = 'Mettre par défaut des parenthèses autour des appels de notes'
+	options['C'] = 'Conserver les appels de notes sans caractères séparateurs (\'\'statu quo\'\')'
+#	options['1'] = '30 septembre 2010 - soit la terminer immédiatement'
+#	options['2'] = '30 septembre 2010 - soit pour un total d\'une semaine'
+#	options['3'] = '7 octobre 2010 - soit pour un total de deux semaines'
+#	options['4'] = '14 octobre 2010 - soit pour un total de trois semaines'
+#	options['5'] = '23 octobre 2010 - soit pour un total d\'un mois'
+#	options['6'] = '23 novembre 2010 - soit pour un total de deux mois'
+#	options['7'] = 'jusqu\'à ce que le 1 050 000e article soit atteint - mais ne pourra pas dépasser le 7 novembre'
 	titleStack = []
 	votes = collections.OrderedDict()
 
@@ -98,6 +102,8 @@ def extractVotes(page):
 
 			dic[titleStack[-1]] = copy.deepcopy(options), normalizedVotes
 			options.clear()
+			global _countVote
+			_countVote = re.compile(r'^#[^:].*%s.*$' % _user, re.UNICODE)
 
 	onATitle = None
 	while line < len(lines) and not onATitle:
@@ -140,6 +146,7 @@ def extractVotes(page):
 				line +=1
 				continue
 
+			lines[line] = lines[line].replace('D, le', 'D')
 			onACondorcetVote = _condorcetVote.match(lines[line])
 			if onACondorcetVote:
 				assert nbVotes <= 0, 'Mixed votes!'
@@ -151,7 +158,7 @@ def extractVotes(page):
 					'\t': '',
 					'>': ' > ',
 					'=': ' = ',
-				}).upper()
+				}).upper().replace('D > D > D > D > D', 'D').replace('D = D = D = D = D', 'D').replace('C = C = C = C = C', 'C')
 				while vote.find('>  > ') != -1:
 					vote = vote.replace('>  >', '>')
 				user = onACondorcetVote.group('user')
@@ -216,10 +223,10 @@ def results(votes, date, temp):
 				continue
 			except TypeError:
 				pass
-			result += '=' * level + title + '=' * level + '\n'
-			if isinstance(next(iter(content.values())), collections.OrderedDict):
+			#result += '=' * level + title + '=' * level + '\n'
+			if False and isinstance(next(iter(content.values())), collections.OrderedDict):
 				result += recResults(content, level + 1, title) + '\n'
-			elif isinstance(content.values()[0], int):
+			elif False and isinstance(content.values()[0], int):
 				totalVotes = sum(content.values())
 				result += """{| style="text-align:left; border:1px solid gray;"
 |- {{ligne grise}}
@@ -233,20 +240,20 @@ def results(votes, date, temp):
 							result += '|-{{ligne verte}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 						elif option in ['Contre', 'Non']:
 							result += '|-{{ligne rouge}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
-						elif option == 'Neutre':
+						elif option in ['Neutre', 'Neutre/Autres']:
 							result += '|-{{ligne grise}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 						else:
 							result += '|-{{ligne jaune}}\n|\'\'\'%s : %s\'\'\'\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
 					else:
 						result += '|-\n|%s : %s\n|{{Avancement|%.f}}\n' % (option, nbVotes, float(nbVotes) / totalVotes * 100)
-				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Neutre'), ('Contre', 'Neutre'), ('Pour', 'Contre', 'Neutre'), ('Oui', 'Non'), ('Oui', 'Neutre'), ('Non', 'Neutre'), ('Oui', 'Non', 'Neutre')]: # TODO faire plus simple
+				if tuple((vote[0] for vote in votes)) in [('Pour', 'Contre'), ('Pour', 'Neutre'), ('Contre', 'Neutre'), ('Pour', 'Contre', 'Neutre'), ('Pour', 'Contre', 'Neutre/Autres'), ('Oui', 'Non'), ('Oui', 'Neutre'), ('Non', 'Neutre'), ('Oui', 'Non', 'Neutre')]: # TODO faire plus simple
 					result += '|-\n|colspan="2"|\n'
-					if votes[1][0] == 'Neutre':
+					if votes[1][0] in ['Neutre', 'Neutre/Autres']:
 						votes[1] = ({ 'Pour': 'Contre', 'Contre': 'Pour', 'Oui': 'Non', 'Non': 'Oui' }[votes[0][0]], 0)
 					ratio = float(votes[0][1]) / (votes[0][1] + votes[1][1]) * 100
-					if ratio > 50:
+					if ratio > 60:
 						result += '|-{{ligne verte}}\n|\'\'\'%s / (%s + %s) \'\'\'\n|{{Avancement|%.f}}\n' % (votes[0][0], votes[0][0], votes[1][0], ratio)
-					elif ratio < 50:
+					elif ratio < 60:
 						result += '|-{{ligne rouge}}\n|\'\'\'%s / (%s + %s) \'\'\'\n|{{Avancement|%.f}}\n' % (votes[0][0], votes[0][0], votes[1][0], ratio)
 					else:
 						result += '|-{{ligne grise}}\n|\'\'\'%s / (%s + %s) \'\'\'\n|{{Avancement|%.f}}\n' % (votes[0][0], votes[0][0], votes[1][0], ratio)
@@ -254,7 +261,7 @@ def results(votes, date, temp):
 			else:
 				# TODO contrôler que personne n'a voté deux fois, si c'est le cas, ne pas prendre le vote en compte, et le marquer à côté
 				# TODO déposer un message sur la PDD de ceux qui auraient voté plusieurs fois
-				votes = content.values()[0]
+				votes = content#.values()[0]
 				condorcetVotes = []
 				result += '{{boîte déroulante/début|titre=Votes normalisés ([[%s#%s|\'\'%s votes\'\']])}}\n' % (sys.argv[1], title.replace('\'\'\'', '').replace('\'\'', ''), len(votes[1]))
 				for vote, user in votes[1]:
@@ -294,11 +301,11 @@ def results(votes, date, temp):
 						else:
 							score[2] += 1
 					if score[0] == score[1]:
-						result += '⇒ match nul\n'
+						result += ('⇒ %s' % pair[score[0] < score[1]]) + (' (à %d contre %d, %d indifférents) ⇒ match nul\n' % (max(score[:-1]), min(score[:-1]), score[2]))
 					else:
 						result += ('⇒ %s' % pair[score[0] < score[1]]) + (' (à %d contre %d, %d indifférents)\n' % (max(score[:-1]), min(score[:-1]), score[2]))
-					scores[pair[0]] += score[0] >= score[1]
-					scores[pair[1]] += score[0] <= score[1]
+					scores[pair[0]] += score[0] > score[1]
+					scores[pair[1]] += score[0] < score[1]
 
 				result += '{{boîte déroulante/fin}}\n'
 
@@ -309,7 +316,7 @@ def results(votes, date, temp):
 					for winner in winners:
 						result += '* %s — %s\n' % (winner, votes[0][winner])
 				else:
-					result += '\nPas de vainqueur potentiel'
+					result += '\nPas de vainqueur potentiel {{=/}}.\n'
 
 		return result
 #	while len(votes.items()) == 1:
@@ -322,30 +329,12 @@ if __name__ == '__main__':
 	print 'jroquet@arkanosis.net'
 	print
 
-	if '-temp' in sys.argv:
-		temp = ' \'\'\'provisoire\'\'\''
-		sys.argv.remove('-temp')
-	else:
-		temp = ''
-
-	if '-publish' in sys.argv:
-		publish = True
-		sys.argv.remove('-publish')
-	else:
+	temp = utils.getOption('temp', ' \'\'\'provisoire\'\'\'', '')
+	publish = utils.getOption('publish')
+	test = utils.getOption('test')
+	if test:
 		publish = False
-
-	if '-test' in sys.argv:
-		test = True
-		publish = False
-		sys.argv.remove('-test')
-	else:
-		test = False
-
-	if '-poll' in sys.argv:
-		reminder = ' (rappel : ceci \'\'n\'est pas\'\' une prise de décision)'
-		sys.argv.remove('-poll')
-	else:
-		reminder = ''
+	reminder = utils.getOption('poll', ' (rappel : ceci \'\'n\'est pas\'\' une prise de décision)', '')
 
 	if len(sys.argv) != 2:
 		print 'Usage: votescrapper.py [-temp] [-poll] [-publish|-test] <Wikipédia:Page de vote>'

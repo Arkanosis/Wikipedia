@@ -59,7 +59,7 @@ _diff = 'vimdiff'
 
 _lang = 'fr'
 _wiki = '%s.wikipedia.org'
-_apiUrl = '/w/api.php?assert=user&'
+_apiUrl = '/w/api.php?'
 _rawUrl = '/w/index.php?'
 _searchUrl = _rawUrl + 'title=Spécial:Recherche&search='
 
@@ -160,6 +160,10 @@ class Arkbot(object):
 
 	def __request(self, url, data=None, headers=_getHeaders, lang=_lang):
 		try:
+                        # TODO FIXME HACK HACK remove this!
+                        #import ssl
+                        #ssl._create_default_https_context = ssl._create_unverified_context
+                        # TODO FIXME HACK HACK remove this!
 			self.__logger.debug('Requesting https://' + (self.__site % lang) + url)
 			response = self.__opener.open(urllib2.Request('https://' + (self.__site % lang) + url,  data, headers))
 			for header, value in response.headers.items():
@@ -199,7 +203,7 @@ class Arkbot(object):
 			rclimit = int(rclimit) - _maxApiRequest
 			if 'query-continue' not in response or rclimit <= 0:
 				break
-			kwargs['rcstart'] = response['query-continue'].recentchanges.rcstart
+			kwargs['rcstart'] = response['query-continue'].recentchanges.rccontinue
 			time.sleep(60. / _maxRequestsPerMinute)
 
 	def __random(self, rnlimit=1, *args, **kwargs):
@@ -228,7 +232,7 @@ class Arkbot(object):
 			uclimit = int(uclimit) - _maxApiRequest
 			if 'query-continue' not in response or uclimit <= 0:
 				break
-			kwargs['ucstart'] = response['query-continue'].usercontribs.ucstart
+			kwargs['ucstart'] = response['query-continue'].usercontribs.uccontinue
 			time.sleep(60. / _maxRequestsPerMinute)
 
 	def __logevents(self, lelimit=10, lang=_lang, *args, **kwargs):
@@ -243,7 +247,7 @@ class Arkbot(object):
 			lelimit = int(lelimit) - _maxApiRequest
 			if 'query-continue' not in response or lelimit <= 0:
 				break
-			kwargs['lestart'] = response['query-continue'].logevents.lestart
+			kwargs['lestart'] = response['query-continue'].logevents.lecontinue.split('|')[0]
 			time.sleep(60. / _maxRequestsPerMinute)
 
 	def __revisions(self, rvlimit=1, *args, **kwargs):
@@ -449,6 +453,8 @@ class Arkbot(object):
 		checkResponse(apiResponse)
 		apiResponse = self.__post(action='login', lgname=self.__name, lgpassword=password, lgtoken=apiResponse.login.token)
 		checkResponse(apiResponse)
+		global _apiUrl
+		_apiUrl += 'assert=user&'
 
 	def logout(self):
 		self.__post(action='logout', noReturn=True)
@@ -648,6 +654,7 @@ if __name__ == '__main__':
 		#for result in bot.search('"charmant village"'):
 		#	bot.replace(result, r'(^|\W)[cC]harmant(\s+)village(\W|$)', r'\1village\3', reason='non neutre')
 		#bot.consolidate('Buddy Rogers (catcheur)')
+		#bot.edit('Utilisateur:Arkbot/test', 'Test', 'Test', False, True)
 
 		if login:
 			logger.info('Logging out')
