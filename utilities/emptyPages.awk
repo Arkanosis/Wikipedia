@@ -14,7 +14,7 @@
   text = substr($0, 34)
 
   if (match($0, /<\/text>/)) {
-    if (match(substr(text, 0, length(text) - 7), /^[:space:]*$/)) {
+    if (match(substr(text, 0, length(text) - 7), /^[[:space:]]*$/)) {
       print title
     }
   }
@@ -27,7 +27,7 @@
 }
 
 /<\/text>/ {
-  if (match(substr(text, 0, length(text) - 7), /^[:space:]*$/)) {
+  if (match(substr(text, 0, length(text) - 7), /^[[:space:]]*$/)) {
     print title
   }
 }
