@@ -23,8 +23,8 @@ if __name__ == '__main__':
 	print 'arkanosis@gmail.com'
 	print
 
-	if len(sys.argv) != 3:
-		print 'Usage: rightchanges.py <wiki> <nbChanges>'
+	if len(sys.argv) != 2:
+		print 'Usage: rightchanges.py <nbChanges>'
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 		additions = []
 		removals = []
 
-		for rightchange in bot.logevents(letype='rights', lang='fr', lelimit=sys.argv[2], leprop='title|user|details|timestamp'):
+		for rightchange in bot.logevents(letype='rights', lang='fr', lelimit=sys.argv[1], leprop='title|user|details|timestamp'):
 			if rightchange.rights is None:
 				rightchange.rights = arkbot.ApiResponse({
 					'old': '',
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
 		print >> sys.stderr, '---'
 
-		for rightchange in bot.logevents(letype='rights', lang='meta', lelimit=sys.argv[2], leprop='title|user|details|timestamp'):
+		for rightchange in bot.logevents(letype='rights', lang='meta', lelimit=sys.argv[1], leprop='title|user|details|timestamp'):
 			if rightchange.rights is None:
 				rightchange.rights = arkbot.ApiResponse({
 					'old': '',
