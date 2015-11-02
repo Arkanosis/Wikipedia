@@ -1,4 +1,4 @@
-#! /bin/env python2.7
+#! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 # Décompte de Condorcet
@@ -22,10 +22,10 @@ votes = []
 with open(sys.argv[1]) as votes_bruts:
     for vote_brut in votes_bruts:
         votes.append({})
-        rangs = vote_brut.replace(' ', '').split('|')[0].split('>')
+        rangs = vote_brut.replace(' ', '').split('|')[1].split('>')
         for valeur, rang in enumerate(rangs):
             for option in rang.replace(',', '=').split('='):
-                votes[-1][option] = valeur
+                votes[-1][option.strip()] = valeur
 
 options = votes[0].keys()
 options.sort()
