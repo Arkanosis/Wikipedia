@@ -52,7 +52,7 @@ if __name__ == '__main__':
 					lastId = revision.revid
 					notifier.Notify('WatchPage', 0, '/data/compil/Wikipedia/Arkbot/data/Wikipedia-logo.svg', 'Nouvelle requête',
 							'<b>%s</b> (%s)\n<i>%s</i>' % (revision.user, utils.fancyTime(revision.timestamp), revision.comment),
-							[], {}, 2)
+							[], {}, 2000)
 					print u'At %s: changed by %s at %s with comment “%s”' % (datetime.datetime.now(), revision.user, utils.fancyTime(revision.timestamp), revision.comment)
 				else:
 					print 'At %s: No change' % datetime.datetime.now()
