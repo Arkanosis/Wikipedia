@@ -3,7 +3,7 @@
 
 # Synonymes v0.1
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/utilities/synonymes.py
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 	print 'Synonymes 0.1'
 	print 'Extraction de synonymes, quasi-synonymes, antonymes...'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	if len(sys.argv) not in [3, 4]:

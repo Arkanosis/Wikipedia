@@ -3,7 +3,7 @@
 
 # Décompte de Condorcet
 # (C) 2009 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # Suivant la méthode expliquée sur
 #  http://fr.wikipedia.org/wiki/Méthode_Condorcet

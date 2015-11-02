@@ -3,7 +3,7 @@
 
 # VoteScrapper v0.2
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -319,7 +319,7 @@ def results(votes, date, temp):
 if __name__ == '__main__':
 	print 'VoteScrapper 0.2'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	if '-temp' in sys.argv:

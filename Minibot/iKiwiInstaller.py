@@ -3,7 +3,7 @@
 
 # Minibot
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Minibot
 
@@ -106,7 +106,7 @@ if not userName:
 
 print """%s (%s)
 (C) 2010 Arkanosis
-arkanosis@gmail.com
+jroquet@arkanosis.net
 """ % (_app, _userAgent)
 
 response = request('fr', 'login', {'lgname': userName, 'lgpassword': getpass.getpass('Password for user %s? ' % userName)}, _post)

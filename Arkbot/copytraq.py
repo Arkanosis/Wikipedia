@@ -3,7 +3,7 @@
 
 # CopyTraq v0.2
 # (C) 2010-2011 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -20,12 +20,12 @@ import arkbot
 import utils
 
 _webBrowser = 'firefox'
-_diffUrl = 'http://fr.wikipedia.org/w/index.php?title=%s&diff=%s&oldid=%s'
+_diffUrl = 'https://fr.wikipedia.org/w/index.php?title=%s&diff=%s&oldid=%s'
 
 if __name__ == '__main__':
 	print 'CopyTraq 0.2'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	botflag = utils.getOption('botflag')

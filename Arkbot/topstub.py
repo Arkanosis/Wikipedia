@@ -3,7 +3,7 @@
 
 # TopStub v0.1
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
 
@@ -26,7 +26,7 @@ _stub = re.compile('\{.{1,3}bauche', re.UNICODE)
 if __name__ == '__main__':
 	print 'TopStub 0.1'
 	print '(C) 2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	if len(sys.argv) != 2:

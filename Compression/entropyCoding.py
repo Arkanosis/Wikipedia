@@ -3,7 +3,7 @@
 
 # Entropy encoding
 # (C) 2010 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # This work is in the public domain
 

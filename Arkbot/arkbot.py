@@ -3,7 +3,7 @@
 
 # Arkbot (prototype)
 # (C) 2010-2011 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # Ce bot est un *prototype* pour Arkbot et n'est pas destiné à un usage en production
 # http://github.com/Arkanosis/Wikipedia/Arkbot (prototype)
@@ -155,13 +155,13 @@ class Arkbot(object):
 
 	def __connect(self, site):
 		self.__site = site
-		self.__opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())
+		self.__opener = urllib2.build_opener(urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor())
 		urllib2.install_opener(self.__opener)
 
 	def __request(self, url, data=None, headers=_getHeaders, lang=_lang):
 		try:
-			self.__logger.debug('Requesting http://' + (self.__site % lang) + url)
-			response = self.__opener.open(urllib2.Request('http://' + (self.__site % lang) + url,  data, headers))
+			self.__logger.debug('Requesting https://' + (self.__site % lang) + url)
+			response = self.__opener.open(urllib2.Request('https://' + (self.__site % lang) + url,  data, headers))
 			for header, value in response.headers.items():
 				if header.lower() == 'content-encoding' and value == 'gzip':
 					response = gzip.GzipFile(fileobj=StringIO.StringIO(response.read()))
@@ -597,7 +597,7 @@ class Arkbot(object):
 if __name__ == '__main__':
 	print 'Arkbot %s (prototype)' % _version
 	print '(C) 2009-2010 Arkanosis'
-	print 'arkanosis@gmail.com'
+	print 'jroquet@arkanosis.net'
 	print
 
 	login = False

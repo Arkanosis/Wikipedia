@@ -3,7 +3,7 @@
 
 # Computing the contrast between two colors
 # (C) 2009 Arkanosis
-# arkanosis@gmail.com
+# jroquet@arkanosis.net
 
 # http://www.w3.org/TR/2008/NOTE-WCAG20-TECHS-20081211/G17
 
