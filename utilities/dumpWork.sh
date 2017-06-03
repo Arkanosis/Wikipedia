@@ -7,6 +7,7 @@ fi
 
 setopt MULTIOS
 
+echo 'Downloading and extracting dump'
 wget -q http://dumps.wikimedia.org/frwiki/$1/frwiki-$1-pages-articles.xml.bz2 -O - | bunzip2 > data/frwiki-$1.xml
 
 echo 'Processing full dump'
@@ -37,3 +38,6 @@ python commercials.py data/frwiki-$1.xml | grep -v '^\(Aide\|Fichier\|MediaWiki\
 
 echo 'Processing redirects'
 python ns_redirects.py data/frwiki-$1.xml | sort > data/frwiki-ns_redirects-$1.txt
+
+echo 'Finished processing'
+notify-send -u normal -t 6000 "Finished processing" -i /usr/share/icons/gnome/48x48/actions/gtk-execute.png
