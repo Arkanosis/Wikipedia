@@ -171,7 +171,7 @@ def noportal(bot, filename, dump, mode, debug):
 		assert False, 'Invalid mode'
 
 	summary = subject.split('/')[0]
-	introPath = '../' * (subject.count('/') + 1) + 'intro'
+	introPath = '../' + 'intro'
 
 	nbArticlesPerSubSection = nbArticlesPerSection / nbColumns
 	nbArticlesPerSection = nbColumns * nbArticlesPerSubSection
