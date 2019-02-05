@@ -134,9 +134,12 @@ _ref = re.compile(r'<ref\b')
 def processPageRef(page):
     print len(re.findall(_ref, page.text)), page.title.encode('utf-8')
 
+_ref = re.compile(r'<ref[^>]*>.*?</ref>', re.IGNORECASE)
+
 def processPageCommercial(page):
+    text = re.sub(_ref, '', page.text)
     for c in u'Ⓡ®℗™℠':
-        if c in page.text:
+        if c in text:
             print page.title.encode('utf-8')
             return
 

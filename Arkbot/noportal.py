@@ -164,7 +164,7 @@ def noportal(bot, filename, dump, mode, debug):
 		root = 'Utilisateur:Arkbot/Homonymies à renommer'
 		subject = 'Homonymies à renommer'
 	elif mode == 14:
-		lastPage = 5
+		lastPage = 4
 		root = 'Utilisateur:Arkbot/Caractères spéciaux à vérifier'
 		subject = 'Caractères spéciaux à vérifier'
 	else:
