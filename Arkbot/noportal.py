@@ -82,7 +82,7 @@ def publishPage(bot, dump, text, first, last, page, debug, firstPage, lastPage, 
 """ % summary, debug, botEdit=True)
 	time.sleep(_secondsBetweenEdits)
 
-def clearPage(bot, dump, page, firstPage, lastPage, root, summary, introPath):
+def clearPage(bot, dump, page, debug, firstPage, lastPage, root, summary, introPath):
 	if page < firstPage:
 		return
 	print 'Vidage de la page %i sur %i (%i restantes) @%ippm' % (page, lastPage, lastPage - page, 60 / _secondsBetweenEdits)
@@ -164,7 +164,7 @@ def noportal(bot, filename, dump, mode, debug):
 		root = 'Utilisateur:Arkbot/Homonymies à renommer'
 		subject = 'Homonymies à renommer'
 	elif mode == 14:
-		lastPage = 4
+		lastPage = 3
 		root = 'Utilisateur:Arkbot/Caractères spéciaux à vérifier'
 		subject = 'Caractères spéciaux à vérifier'
 	else:
@@ -234,7 +234,7 @@ def noportal(bot, filename, dump, mode, debug):
 
 	if lastPage != sys.maxint:
 		for pageNumber in xrange(max(firstPage, pageNumber), lastPage + 1):
-			clearPage(bot, dump, pageNumber, firstPage, lastPage, root, summary, introPath)
+			clearPage(bot, dump, pageNumber, debug, firstPage, lastPage, root, summary, introPath)
 
 	if mode in [1, 4, 7, 8, 9, 10, 11, 12, 13]:
 		editOrDebug(bot, 'Modèle:Palette %s' % subject, '%s au %s' % (summary, dump), model, debug, botEdit=True)
