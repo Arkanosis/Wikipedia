@@ -39,7 +39,7 @@ END {
   next
 }
 
-tolower($0) ~ /(#redirect|{{portail|{{homonyme|{{homonymie|{{disambig|{{bandeau[ _]standard[ _]pour[ _]page[ _]d'homonymie|{{arrondissements[ _]homonymes|{{batailles[ _]homonymes|{{cantons[ _]homonymes|{{communes[ _]françaises[ _]homonymes|{{édifices[ _]religieux[ _]homonymes|{{films[ _]homonymes|{{hydronymie|{{gouvernements[ _]homonymes|{{guerres[ _]homonymes|{{internationalisation|{{isomérie|{{paronymie|{{patronyme|{{patronymie|{{personnes[ _]homonymes|{{saints[ _]homonymes|{{sigle|{{titres[ _]homonymes|{{toponymie|{{unités[ _]homonymes|{{villes[ _]homonymes|{{voir[ _]homonymes|{{rues[ _]homonymes)/ {
+tolower($0) ~ /(#redirect|{{portail|{{homonyme|{{homonymie|{{disambig|{{bandeau[ _]standard[ _]pour[ _]page[ _]d'homonymie|{{arrondissements[ _]homonymes|{{batailles[ _]homonymes|{{cantons[ _]homonymes|{{communes[ _]françaises[ _]homonymes|{{édifices[ _]religieux[ _]homonymes|{{films[ _]homonymes|{{hydronymie|{{gouvernements[ _]homonymes|{{guerres[ _]homonymes|{{internationalisation|{{isomérie|{{paronymie|{{patronyme|{{patronymie|{{personnes[ _]homonymes|{{saints[ _]homonymes|{{sigle|{{titres[ _]homonymes|{{toponymie|{{unités[ _]homonymes|{{villes[ _]homonymes|{{voir[ _]homonymes|{{rues[ _]homonymes|{{place[ _]ou[ _]square[ _]homonyme)/ {
   portal = 1
   next
 }
