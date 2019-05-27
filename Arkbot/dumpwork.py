@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # DumpWork v0.1
-# (C) 2017 Arkanosis
+# (C) 2017-2019 Arkanosis
 # jroquet@arkanosis.net
 
 # http://github.com/Arkanosis/Wikipedia/Arkbot
@@ -23,7 +23,7 @@ import utils
 
 if __name__ == '__main__':
 	print 'DumpWork 0.1'
-	print '(C) 2017 Arkanosis'
+	print '(C) 2017-2019 Arkanosis'
 	print 'jroquet@arkanosis.net'
 	print
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
 		if not debug:
 			bot.login(getpass.getpass('Bot password ? '))
 
-		post.post(bot, 'data/pagesEnImpasse-{}.txt'.format(sys.argv[1]), dump, 1, debug)
+		#post.post(bot, 'data/pagesEnImpasse-{}.txt'.format(sys.argv[1]), dump, 1, debug)
 		post.post(bot, 'data/pagesVides-{}.txt'.format(sys.argv[1]), dump, 2, debug)
 		post.post(bot, 'data/frwiki-ns_redirects-{}.txt'.format(sys.argv[1]), dump, 3, debug)
 
