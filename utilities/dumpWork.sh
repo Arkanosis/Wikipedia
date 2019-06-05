@@ -38,7 +38,9 @@ echo '[5/6] Processing commercials'
 python commercials.py data/frwiki-$1.xml | grep -v '^\(Aide\|Fichier\|MediaWiki\|Modèle\|Portail\|Projet\|Wikipédia\):' | sort > data/frwiki-commercials-$1.txt &
 
 echo '[6/6] Processing redirects'
-python ns_redirects.py data/frwiki-$1.xml | sort > data/frwiki-ns_redirects-$1.txt
+python ns_redirects.py data/frwiki-$1.xml | sort > data/frwiki-ns_redirects-$1.txt &
+
+wait
 
 echo 'Finished processing'
 notify-send -u normal -t 6000 "Finished processing" -i /usr/share/icons/gnome/48x48/actions/gtk-execute.png
