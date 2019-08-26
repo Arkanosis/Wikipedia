@@ -14,7 +14,7 @@ wget -q --show-progress https://dumps.wikimedia.org/frwiki/$1/frwiki-$1-pages-ar
 echo '[2/6] Processing full dump'
 { pv data/frwiki-$1.xml } \
     > >(awk -f pagesEnImpasse.awk | sort > data/pagesEnImpasse-$1.txt) \
-    > >(awk -f emptyPages.awk | grep -vxF 'MediaWiki:Anonnotice' | sort > data/pagesVides-$1.txt) \
+    > >(awk -f emptyPages.awk | grep -vxFf emptyPages.blacklist | sort > data/pagesVides-$1.txt) \
     > >(awk -f lastEdit.awk | sort > data/lastEdit-$1.txt) \
     > >(awk -f articlesSansPortail.awk | sort > data/articlesSansPortail-full-$1.txt) \
     > >(awk -f articlesSansInfobox.awk | sort > data/articlesSansInfobox-full-$1.txt)
