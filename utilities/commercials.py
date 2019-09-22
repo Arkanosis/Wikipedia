@@ -137,7 +137,7 @@ def processPageRef(page):
 _ref = re.compile(r'<ref[^>]*>.*?</ref>', re.IGNORECASE)
 
 def processPageCommercial(page):
-    text = re.sub(_ref, '', page.text)
+    text = re.sub(_ref, '', page.text).replace('è®e', '')
     for c in u'Ⓡ®℗™℠':
         if c in text:
             print page.title.encode('utf-8')
