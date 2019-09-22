@@ -178,7 +178,8 @@ def hasNamespace(title):
 
 def processRedirectsOutsideMain(page):
     if hasNamespace(page.redirect) and not hasNamespace(page.title):
-        print page.title.encode('utf-8')
+        if not page.title.startswith('P:'): # filter project redirects, for now
+            print page.title.encode('utf-8')
 
 if __name__ == "__main__":
     """
