@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Arkbot (prototype)
-# (C) 2010-2011 Arkanosis
+# (C) 2010-2019 Arkanosis
 # jroquet@arkanosis.net
 
 # Ce bot est un *prototype* pour Arkbot et n'est pas destiné à un usage en production
@@ -86,6 +86,17 @@ _postHeaders = {
 _internalLink = re.compile(r'\[\[[^\]]+\]\]')
 _interWiki = re.compile(r'(\[\[(?P<lang>[a-z][a-z].?(?:x?-[^\]]+)?|simple|tokipona):(?P<name>[^\]]*)\]\])')
 _redirect = re.compile(r'^\s*#(?:redirect|redirection|omdirigering|перенаправление|перенапр|redirecionamento|patrz|przekieruj|tam|doorverwijzing|転送|リダイレクト|転送|リダイレクト|rinvia|rinvio|rimando|redirección|redireccion|weiterleitung)\s*\[\[([^\]]+)\]\]', re.IGNORECASE)
+
+# HACK to force IPv4, because IPv6 hangs for some reason
+import socket
+old_getaddrinfo = socket.getaddrinfo
+def new_getaddrinfo(*args, **kwargs):
+	responses = old_getaddrinfo(*args, **kwargs)
+	return [response
+			for response in responses
+			if response[0] == socket.AF_INET]
+socket.getaddrinfo = new_getaddrinfo
+# End of HACK
 
 class ArkbotException(Exception):
 	def __init__(self, reason):
