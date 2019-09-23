@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Post v0.1
@@ -62,18 +62,18 @@ def editOrDebug(bot, page, summary, text, debug, minor=False, botEdit=False):
 	# 	pass
 
 	if debug:
-		print 'Page: ', page
-		print 'Summary: ', summary
-		print 'Text: ', text
-		print 'Minor: ', minor
-		print 'bot: ', botEdit
+		print('Page: ', page)
+		print('Summary: ', summary)
+		print('Text: ', text)
+		print('Minor: ', minor)
+		print('bot: ', botEdit)
 	else:
 		bot.edit(page, summary, text, minor, botEdit)
 
 def publishPage(bot, dump, text, first, last, page, debug, firstPage, lastPage, root, summary, introPath):
 	if page < firstPage:
 		return
-	print 'Mise à jour de la page %i sur %i (%i restantes) @%ippm' % (page, lastPage, lastPage - page, 60 / _secondsBetweenEdits)
+	print('Mise à jour de la page %i sur %i (%i restantes) @%ippm' % (page, lastPage, lastPage - page, 60 // _secondsBetweenEdits))
 	editOrDebug(bot, root + '/%i' % page, '%s au %s, %i à %i' % (summary, dump, first, last), ("""{{Mise à jour bot|Arkanosis}}
 
 == %s (%i à %i) ==\n\n{{%s}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (summary, first, last, introPath, dump)) + text + """
@@ -85,7 +85,7 @@ def publishPage(bot, dump, text, first, last, page, debug, firstPage, lastPage, 
 def clearPage(bot, dump, page, debug, firstPage, lastPage, root, summary, introPath):
 	if page < firstPage:
 		return
-	print 'Vidage de la page %i sur %i (%i restantes) @%ippm' % (page, lastPage, lastPage - page, 60 / _secondsBetweenEdits)
+	print('Vidage de la page %i sur %i (%i restantes) @%ippm' % (page, lastPage, lastPage - page, 60 // _secondsBetweenEdits))
 	editOrDebug(bot, root + '/%i' % page, '%s au %s, page vide' % (summary, dump), """{{Mise à jour bot|Arkanosis}}
 
 {{%s}}\n\nDernière mise à jour le ~~~~~ avec le dump du %s.""" % (introPath, dump), debug, botEdit=True)
@@ -95,7 +95,7 @@ def noportal(bot, filename, dump, mode, debug):
 	transform = link
 
 	firstPage = int(utils.getValue('first', 1))
-	lastPage = sys.maxint
+	lastPage = sys.maxsize
 
 	nbColumns = 3
 	nbArticlesPerSection = 100
@@ -173,7 +173,7 @@ def noportal(bot, filename, dump, mode, debug):
 	summary = subject.split('/')[0]
 	introPath = '../' + 'intro'
 
-	nbArticlesPerSubSection = nbArticlesPerSection / nbColumns
+	nbArticlesPerSubSection = nbArticlesPerSection // nbColumns
 	nbArticlesPerSection = nbColumns * nbArticlesPerSubSection
 	nbArticlesPerPage = nbArticlesPerSection * nbSectionsPerPage
 
@@ -232,25 +232,25 @@ def noportal(bot, filename, dump, mode, debug):
 [[Catégorie:Palette de navigation espace non encyclopédique|%s]]
 </noinclude>""" % subject
 
-	if lastPage != sys.maxint:
-		for pageNumber in xrange(max(firstPage, pageNumber), lastPage + 1):
+	if lastPage != sys.maxsize:
+		for pageNumber in range(max(firstPage, pageNumber), lastPage + 1):
 			clearPage(bot, dump, pageNumber, debug, firstPage, lastPage, root, summary, introPath)
 
 	if mode in [1, 4, 7, 8, 9, 10, 11, 12, 13]:
 		editOrDebug(bot, 'Modèle:Palette %s' % subject, '%s au %s' % (summary, dump), model, debug, botEdit=True)
 
 if __name__ == '__main__':
-	print 'NoPortal 0.1'
-	print '(C) 2010 Arkanosis'
-	print 'jroquet@arkanosis.net'
-	print
+	print('NoPortal 0.1')
+	print('(C) 2010 Arkanosis')
+	print('jroquet@arkanosis.net')
+	print()
 
 	dump = utils.getValue('dump')
 	mode = int(utils.getValue('mode'))
 	debug = utils.getOption('debug')
 
 	if len(sys.argv) != 2:
-		print 'Usage: noportal.py -dump <dumpDate> -mode <mode> [-debug] <fichier>'
+		print('Usage: noportal.py -dump <dumpDate> -mode <mode> [-debug] <fichier>')
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -268,6 +268,6 @@ if __name__ == '__main__':
 		if not debug:
 			bot.logout()
 
-	except (arkbot.ArkbotException), e:
-		print e
+	except (arkbot.ArkbotException) as e:
+		print(e)
 		sys.exit(2)

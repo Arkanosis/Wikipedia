@@ -17,4 +17,4 @@ echo Articles sans portail: $noportal \($(((noportal+494)/495)) pages\)
 nobox=`wc -l data/articlesSansInfobox-$1.txt | cut -d ' ' -f 1`
 echo Articles sans infobox: $nobox \($(((nobox+494)/495)) pages\)
 
-python dumpwork.py $debug -dump $dump $1
+python3 dumpwork.py $debug -dump $dump $1

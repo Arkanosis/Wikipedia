@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -21,14 +21,11 @@ class WikiPage(object):
     Holds data related to one <page> element parsed from the dump
     """
     def __init__(self):
-        self.title = u''
-        self.id = u''
-        self.text = u''
+        self.title = ''
+        self.id = ''
+        self.text = ''
 
     def __str__(self):
-        return 'ID %s TITLE %s' % (self.id.encode('utf_8'), self.title.encode('utf_8'))
-
-    def __unicode__(self):
         return 'ID %s TITLE %s' % (self.id, self.title)
 
 class text_normalize_filter(XMLFilterBase):
@@ -117,30 +114,30 @@ def parseWithCallback(inputFileName, callback):
 
 def processPage(page):
     if page.title.endswith(('.js', '.css')):
-        print 'Found', page.title
+        print('Found', page.title)
         with open('data/sitecode/' + page.title.replace('/', '_'), 'w') as f:
-            f.write(page.text.encode('utf8'))
+            f.write(page.text)
 
 def processPageMW(page):
     if page.title.startswith('MediaWiki:'):
-        print 'Found', page.title
+        print('Found', page.title)
         with open('data/siteadmin/' + page.title.replace('/', '_'), 'w') as f:
-            f.write(page.text.encode('utf8'))
+            f.write(page.text)
 
 import re
 
 _ref = re.compile(r'<ref\b')
 
 def processPageRef(page):
-    print len(re.findall(_ref, page.text)), page.title.encode('utf-8')
+    print(len(re.findall(_ref, page.text)), page.title)
 
 _ref = re.compile(r'<ref[^>]*>.*?</ref>', re.IGNORECASE)
 
 def processPageCommercial(page):
     text = re.sub(_ref, '', page.text).replace('è®e', '')
-    for c in u'Ⓡ®℗™℠':
+    for c in 'Ⓡ®℗™℠':
         if c in text:
-            print page.title.encode('utf-8')
+            print(page.title)
             return
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Post v0.1
@@ -34,7 +34,7 @@ def post(bot, filename, dump, mode, debug):
 		_summary = 'Pages redirigeant hors de l\'espace de nom principal au %s' % dump
 		_pages = 'redirigeant hors de l\'espace de nom principal'
 	else:
-		print 'Unknown mode', mode
+		print('Unknown mode', mode)
 		sys.exit(1)
 
 	text = """{{Mise à jour bot|Arkanosis}}
@@ -47,22 +47,22 @@ def post(bot, filename, dump, mode, debug):
 			text += '# [[:%s]]\n' % line.rstrip()
 
 	if debug:
-		print(_page, _summary, text, True)
+		print((_page, _summary, text, True))
 	else:
 		bot.edit(_page, _summary, text, bot=True)
 
 if __name__ == '__main__':
-	print 'Post 0.1'
-	print '(C) 2010 Arkanosis'
-	print 'jroquet@arkanosis.net'
-	print
+	print('Post 0.1')
+	print('(C) 2010 Arkanosis')
+	print('jroquet@arkanosis.net')
+	print()
 
 	dump = utils.getValue('dump')
 	mode = int(utils.getValue('mode'))
 	debug = utils.getOption('debug')
 
 	if len(sys.argv) != 2:
-		print 'Usage: post.py <fichier>'
+		print('Usage: post.py <fichier>')
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -75,11 +75,11 @@ if __name__ == '__main__':
 		if not debug:
 			bot.login(getpass.getpass('Bot password ? '))
 
-                post(bot, sys.argv[1], dump, mode, debug)
+		post(bot, sys.argv[1], dump, mode, debug)
 
 		if not debug:
 			bot.logout()
 
-	except (arkbot.ArkbotException), e:
-		print e
+	except (arkbot.ArkbotException) as e:
+		print(e)
 		sys.exit(2)

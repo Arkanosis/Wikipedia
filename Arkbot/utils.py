@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -15,7 +15,7 @@ class ProgressBar(object):
         ratio = float(progression) / self.__size
         percentage = int(100 * ratio)
         barSize = int(ProgressBar.__width * ratio)
-        print chr(27) + '[A%3d%%[' % percentage + '=' * barSize  + '>' + ' ' * (ProgressBar.__width - barSize) + '] %d / %d' % (progression, self.__size), text
+        print((chr(27) + '[A%3d%%[' % percentage + '=' * barSize  + '>' + ' ' * (ProgressBar.__width - barSize) + '] %d / %d' % (progression, self.__size), text))
 
 def getch():
 	stdin = sys.stdin.fileno()

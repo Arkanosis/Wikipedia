@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # DumpWork v0.1
@@ -22,16 +22,16 @@ import post
 import utils
 
 if __name__ == '__main__':
-	print 'DumpWork 0.1'
-	print '(C) 2017-2019 Arkanosis'
-	print 'jroquet@arkanosis.net'
-	print
+	print('DumpWork 0.1')
+	print('(C) 2017-2019 Arkanosis')
+	print('jroquet@arkanosis.net')
+	print()
 
 	dump = utils.getValue('dump')
 	debug = utils.getOption('debug')
 
 	if len(sys.argv) != 2:
-		print 'Usage: dumpWork.py <dump>'
+		print('Usage: dumpWork.py <dump>')
 		sys.exit(1)
 
 	date = datetime.datetime.now()
@@ -67,6 +67,6 @@ if __name__ == '__main__':
 		if not debug:
 			bot.logout()
 
-	except (arkbot.ArkbotException), e:
-		print e
+	except (arkbot.ArkbotException) as e:
+		print(e)
 		sys.exit(2)

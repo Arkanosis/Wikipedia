@@ -35,10 +35,10 @@ echo '[4/6] Processing articles sans infobox'
 #python noiw.py data/wikidatawiki-20130505.xml | sort -rn > data/articlesACreer-20130505.txt
 
 echo '[5/6] Processing commercials'
-python commercials.py data/frwiki-$1.xml | grep -v '^\(Aide\|Fichier\|MediaWiki\|Modèle\|Portail\|Projet\|Wikipédia\):' | sort > data/frwiki-commercials-$1.txt &
+python3 commercials.py data/frwiki-$1.xml | grep -v '^\(Aide\|Fichier\|MediaWiki\|Modèle\|Portail\|Projet\|Wikipédia\):' | sort > data/frwiki-commercials-$1.txt &
 
 echo '[6/6] Processing redirects'
-python ns_redirects.py data/frwiki-$1.xml | sort > data/frwiki-ns_redirects-$1.txt &
+python3 ns_redirects.py data/frwiki-$1.xml | sort > data/frwiki-ns_redirects-$1.txt &
 
 wait
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -21,15 +21,12 @@ class WikiPage(object):
     Holds data related to one <page> element parsed from the dump
     """
     def __init__(self):
-        self.title = u''
-        self.id = u''
-        self.text = u''
-        self.redirect = u''
+        self.title = ''
+        self.id = ''
+        self.text = ''
+        self.redirect = ''
 
     def __str__(self):
-        return 'ID %s TITLE %s' % (self.id.encode('utf_8'), self.title.encode('utf_8'))
-
-    def __unicode__(self):
         return 'ID %s TITLE %s' % (self.id, self.title)
 
 class text_normalize_filter(XMLFilterBase):
@@ -120,57 +117,57 @@ def parseWithCallback(inputFileName, callback):
 
 def processPage(page):
     if page.title.endswith(('.js', '.css')):
-        print 'Found', page.title
+        print('Found', page.title)
         with open('data/sitecode/' + page.title.replace('/', '_'), 'w') as f:
-            f.write(page.text.encode('utf8'))
+            f.write(page.text)
 
 def processPageMW(page):
     if page.title.startswith('MediaWiki:'):
-        print 'Found', page.title
+        print('Found', page.title)
         with open('data/siteadmin/' + page.title.replace('/', '_'), 'w') as f:
-            f.write(page.text.encode('utf8'))
+            f.write(page.text)
 
 import re
 
 _ref = re.compile(r'<ref\b')
 
 def processPageRef(page):
-    print len(re.findall(_ref, page.text)), page.title.encode('utf-8')
+    print(len(re.findall(_ref, page.text)), page.title)
 
 def processPageCommercial(page):
-    for c in u'Ⓡ®℗™℠':
+    for c in 'Ⓡ®℗™℠':
         if c in page.text:
-            print page.title.encode('utf-8')
+            print(page.title)
             return
 
 def hasNamespace(title):
     for namespace in [
-            u'Média',
-            u'Spécial',
-            u'Discussion',
-            u'Utilisateur',
-            u'Discussion utilisateur',
-            u'Wikipédia',
-            u'Discussion Wikipédia',
-            u'Fichier',
-            u'Discussion fichier',
-            u'MediaWiki',
-            u'Discussion MediaWiki',
-            u'Modèle',
-            u'Discussion modèle',
-            u'Aide',
-            u'Discussion aide',
-            u'Catégorie',
-            u'Discussion catégorie',
-            u'Portail',
-            u'Discussion Portail',
-            u'Projet',
-            u'Discussion Projet',
-            u'Référence',
-            u'Discussion Référence',
-            u'Module',
-            u'Discussion module',
-            u'Sujet',
+            'Média',
+            'Spécial',
+            'Discussion',
+            'Utilisateur',
+            'Discussion utilisateur',
+            'Wikipédia',
+            'Discussion Wikipédia',
+            'Fichier',
+            'Discussion fichier',
+            'MediaWiki',
+            'Discussion MediaWiki',
+            'Modèle',
+            'Discussion modèle',
+            'Aide',
+            'Discussion aide',
+            'Catégorie',
+            'Discussion catégorie',
+            'Portail',
+            'Discussion Portail',
+            'Projet',
+            'Discussion Projet',
+            'Référence',
+            'Discussion Référence',
+            'Module',
+            'Discussion module',
+            'Sujet',
     ]:
         if title.startswith(namespace + ':'):
             return True
@@ -179,7 +176,7 @@ def hasNamespace(title):
 def processRedirectsOutsideMain(page):
     if hasNamespace(page.redirect) and not hasNamespace(page.title):
         if not page.title.startswith('P:'): # filter project redirects, for now
-            print page.title.encode('utf-8')
+            print(page.title)
 
 if __name__ == "__main__":
     """
