@@ -1,10 +1,10 @@
 #! /bin/sh
 
-# socksfinder v0.1
+# socksfinder
 # Copyright (C) 2020 Jérémie Roquet <jroquet@arkanosis.net>
 # Licensed under the ISC license
 
-VERSION='socksfinder v0.2.1'
+VERSION='socksfinder v0.3.0'
 
 export LANG=C
 export LC_ALL=C
@@ -34,7 +34,7 @@ build() {
         return
     fi
 
-    curl https://dumps.wikimedia.org/frwiki/20200420/frwiki-20200420-stub-meta-history.xml.gz  |
+    curl https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-stub-meta-history.xml.gz  |
         gunzip |
         sed -n 's@^ *<title>\([^<]\+\)</title>$@P \1@p ; s@^ *<username>\([^ ]\+\)</username>@U \1@p' |
         awk '
