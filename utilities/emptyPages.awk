@@ -5,20 +5,17 @@
   next
 }
 
-/<text xml:space="preserve" \/>/ {
-    print title
-    next
+/<text( bytes="[0-9]+")?( xml:space="preserve")? \/>/ {
+  print title
+  next
 }
 
-/<text xml:space="preserve">/ {
-  text = substr($0, 34)
-
-  if (match($0, /<\/text>/)) {
-    if (match(substr(text, 0, length(text) - 7), /^[[:space:]]*$/)) {
-      print title
-    }
+/<text( bytes="[0-9]+")?( xml:space="preserve")?>/ {
+  if (match($0, /<text( bytes="[0-9]+")?( xml:space="preserve")?>[[:space:]]*<\/text>/)) {
+    print title
+  } else if (match($0, /<text( bytes="[0-9]+")?( xml:space="preserve")?>(.*)/, matches)) {
+    text = matches[3]
   }
-
   next
 }
 
