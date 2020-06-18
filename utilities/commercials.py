@@ -12,6 +12,7 @@ receive the page.
 Read more about dumps here: http://meta.wikimedia.org/wiki/Data_dumps
 """
 
+import re
 import sys
 from xml.sax import handler, make_parser
 from xml.sax.saxutils import XMLFilterBase
@@ -124,17 +125,14 @@ def processPageMW(page):
         with open('data/siteadmin/' + page.title.replace('/', '_'), 'w') as f:
             f.write(page.text)
 
-import re
-
-_ref = re.compile(r'<ref\b')
-
-def processPageRef(page):
-    print(len(re.findall(_ref, page.text)), page.title)
-
 _ref = re.compile(r'<ref[^>]*>.*?</ref>', re.IGNORECASE)
+_image = re.compile(r'(\|\s*image\s*=\s*[^\|\n}]+|\[\[(file|fichier|image)\s*:\s*[^]]+)', re.IGNORECASE)
+
+def processPageSub(page):
+    print(re.findall(_image, page.text))
 
 def processPageCommercial(page):
-    text = re.sub(_ref, '', page.text).replace('è®e', '')
+    text = re.sub(_image, '', re.sub(_ref, '', page.text)).replace('è®e', '')
     for c in 'Ⓡ®℗™℠':
         if c in text:
             print(page.title)
@@ -147,5 +145,5 @@ if __name__ == "__main__":
     """
 #    parseWithCallback(sys.argv[1], processPage)
 #    parseWithCallback(sys.argv[1], processPageMW)
-#    parseWithCallback(sys.argv[1], processPageRef)
+#    parseWithCallback(sys.argv[1], processPageSub)
     parseWithCallback(sys.argv[1], processPageCommercial)
