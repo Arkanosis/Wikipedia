@@ -103,7 +103,7 @@ class WikiDumpHandler(handler.ContentHandler):
         pass
         #print "Processed %d pages" % self.pagesProcessed
 
-def parseWithCallback(inputFileName, callback):
+def parseWithCallback(callback):
     parser = make_parser()
     parser.setFeature(handler.feature_namespaces, 0)
 
@@ -111,7 +111,7 @@ def parseWithCallback(inputFileName, callback):
     wdh = WikiDumpHandler(pageCallBack=callback)
     filter_handler = text_normalize_filter(parser, wdh)
 
-    filter_handler.parse(open(inputFileName))
+    filter_handler.parse(sys.stdin)
 
 def processPage(page):
     if page.title.endswith(('.js', '.css')):
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     When called as script, argv[1] is assumed to be a filename and we
     simply print pages found.
     """
-#    parseWithCallback(sys.argv[1], processPage)
-#    parseWithCallback(sys.argv[1], processPageMW)
-#    parseWithCallback(sys.argv[1], processPageSub)
-    parseWithCallback(sys.argv[1], processPageCommercial)
+#    parseWithCallback(processPage)
+#    parseWithCallback(processPageMW)
+#    parseWithCallback(processPageSub)
+    parseWithCallback(processPageCommercial)
